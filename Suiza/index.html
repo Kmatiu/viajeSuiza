@@ -490,13 +490,33 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
   font-size: 14px;
   box-shadow: var(--shadow-sm);
 }
-.tl-item__head { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+.tl-item__head { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 4px; align-items: center; }
+.tl-item__when { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; min-width: 0; }
 .tl-item__time {
   font-family: var(--font-display);
   font-size: 14px;
   font-weight: 700;
   color: var(--accent);
   letter-spacing: 0.02em;
+}
+/* Chip de duracion: cuanto dura la parada o cuanto se tarda en el trayecto */
+.tl-item__dur {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 11.5px; font-weight: 600; line-height: 1;
+  padding: 3px 8px; border-radius: 999px;
+  color: var(--text-muted);
+  background: color-mix(in srgb, var(--text-muted) 12%, transparent);
+  border: 1px solid var(--line);
+  white-space: nowrap;
+}
+.tl-item__dur--move {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 34%, transparent);
+}
+@supports not (color: color-mix(in srgb, red 50%, transparent)) {
+  .tl-item__dur { background: rgba(128,128,128,0.12); }
+  .tl-item__dur--move { background: rgba(128,128,128,0.18); }
 }
 .tl-item__check {
   width: 22px;
@@ -618,7 +638,8 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
   .pr-meta { font-size: 9pt; color: #444; margin-bottom: 8px; }
   .pr-tl { margin: 0 0 4px; padding-left: 0; list-style: none; }
   .pr-tl li { margin-bottom: 5px; padding-left: 16mm; text-indent: -16mm; break-inside: avoid; }
-  .pr-tl .pr-time { display: inline-block; width: 14mm; font-weight: 700; }
+  .pr-tl .pr-dur { color: #555; font-size: 10.5px; font-weight: 600; }
+.pr-time { display: inline-block; width: 14mm; font-weight: 700; }
   .pr-place { border-left: 2pt solid #000; padding-left: 8px; margin-bottom: 10px; break-inside: avoid; }
   .pr-kv { font-size: 9.5pt; color: #222; margin: 1px 0; }
   .pr-notes { border: 1pt dashed #000; padding: 8px 10px; margin-top: 8px; break-inside: avoid; }
@@ -763,11 +784,34 @@ body.is-offline .offline-chip { display: inline-flex; }
 .photo-list__row code { font-size: 11.5px; word-break: break-all; }
 .photo-list__name { margin-left: auto; color: var(--text-muted); font-size: 11px; text-align: right; flex-shrink: 1; }
 .photo-lightbox { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.93); display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 14px; padding: 16px; }
+  align-items: center; justify-content: center; gap: 14px; padding: 16px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
 .photo-lightbox img { max-width: 100%; max-height: 76vh; border-radius: 10px; }
 .photo-lightbox__bar { display: flex; gap: 10px; }
 .photo-lightbox__btn { padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.32);
   background: rgba(255,255,255,0.14); color: #fff; font-size: 13.5px; font-weight: 600; cursor: pointer; }
+/* --- Carrusel: varias fotos del mismo lugar se pasan sin cerrar --- */
+.photo-lightbox__stage { position: relative; display: flex; align-items: center; justify-content: center;
+  width: 100%; max-width: 900px; touch-action: pan-y; }
+.photo-lightbox__stage img { user-select: none; -webkit-user-drag: none; }
+.photo-lightbox__nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 46px; height: 46px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.30); background: rgba(0,0,0,0.48);
+  color: #fff; font-size: 26px; line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+.photo-lightbox__nav:hover { background: rgba(255,255,255,0.22); }
+.photo-lightbox__nav--prev { left: 6px; padding-right: 3px; }
+.photo-lightbox__nav--next { right: 6px; padding-left: 3px; }
+.photo-lightbox__count { color: rgba(255,255,255,0.82); font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em; }
+.photo-lightbox__dots { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; max-width: 70vw; }
+.photo-lightbox__dot { width: 7px; height: 7px; border-radius: 50%; border: 0; padding: 0; cursor: pointer;
+  background: rgba(255,255,255,0.34); }
+.photo-lightbox__dot.is-on { background: #fff; transform: scale(1.28); }
+.place-photo__n { position: absolute; left: 5px; bottom: 5px; font-size: 10px; font-weight: 700;
+  padding: 1px 6px; border-radius: 999px; background: rgba(0,0,0,0.55); color: #fff; letter-spacing: 0.03em; }
 .day-notes { margin-top: 24px; background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
 .day-notes__label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 6px; }
 .day-notes__textarea {
@@ -1204,7 +1248,7 @@ body.is-offline .offline-chip { display: inline-flex; }
 {
  "schema_version": "1.2",
  "meta": {
-  "title": "Suiza en seis días: cascadas, lagos alpinos y ciudades",
+  "title": "Suiza en siete días: cascadas, lagos alpinos y ciudades",
   "subtitle": "De Ginebra a Lucerna con dos adultos y una viajera de trece años",
   "destination": {
    "name": "Suiza",
@@ -1217,8 +1261,8 @@ body.is-offline .offline-chip { display: inline-flex; }
   },
   "dates": {
    "start": "2026-08-10",
-   "end": "2026-08-15",
-   "days": 6
+   "end": "2026-08-16",
+   "days": 7
   },
   "travelers": {
    "adults": 2,
@@ -1229,12 +1273,12 @@ body.is-offline .offline-chip { display: inline-flex; }
   },
   "budget": {
    "level": "medio",
-   "total_estimated": 2587,
+   "total_estimated": 2657,
    "breakdown": {
     "flights": 615,
     "accommodation": 942,
-    "transport": 200,
-    "food": 250,
+    "transport": 230,
+    "food": 290,
     "activities": 490,
     "shopping": 50,
     "other": 40
@@ -1267,7 +1311,7 @@ body.is-offline .offline-chip { display: inline-flex; }
   "theme_color": "#1E6F5C"
  },
  "intro": {
-  "narrative": "Seis días trazando una diagonal por Suiza, desde el lago Lemán hasta el lago de los Cuatro Cantones, con una obsesión declarada: el agua. Seis cascadas, cinco lagos, dos gargantas excavadas por glaciares y un puente colgante a tres mil metros. El itinerario nace de una idea sencilla y bastante poco habitual en los viajes a Suiza: en lugar de plantarse en un valle y hacer excursiones radiales, este avanza cada día hacia el este y duerme cada noche en un sitio distinto, de modo que el paisaje cambia por completo entre el desayuno y la cena. Empieza entre viñas y castillos saboyanos a orillas del Lemán, sube al glaciar de Les Diablerets, se adentra en el corazón del Oberland bernés, cruza los valles glaciares del Haslital y termina en Lucerna, la única ciudad de verdad del recorrido, antes de cerrar el círculo en el casco viejo de Ginebra. Con la Half Fare Card en el bolsillo y la Junior Travel Card de la pequeña, la parte más cara del viaje suizo —los teleféricos— se queda en algo asumible. Y con la comida en el maletero, los picnics se hacen en sitios que ningún restaurante puede igualar: la orilla del Lac Retaud, los jardines del castillo de Chillon, la ribera del Oeschinensee.",
+  "narrative": "Siete días trazando una diagonal por Suiza, desde el lago Lemán hasta el lago de los Cuatro Cantones y de vuelta, con una obsesión declarada: el agua. Seis cascadas, cinco lagos, dos gargantas excavadas por glaciares y un puente colgante a tres mil metros. El itinerario nace de una idea sencilla y bastante poco habitual en los viajes a Suiza: en lugar de plantarse en un valle y hacer excursiones radiales, este avanza cada día y duerme cada noche en un sitio distinto, de modo que el paisaje cambia por completo entre el desayuno y la cena. Empieza entre viñas y castillos saboyanos a orillas del Lemán, sube al glaciar de Les Diablerets, se adentra en el corazón del Oberland bernés, cruza los valles glaciares del Haslital y desemboca en Lucerna, para volver después por Berna hasta cerrar el círculo en el casco viejo de Ginebra. Con la Half Fare Card en el bolsillo y la Junior Travel Card de la pequeña, la parte más cara del viaje suizo —los teleféricos— se queda en algo asumible. Y con la comida en el maletero, los picnics se hacen en sitios que ningún restaurante puede igualar: la orilla del Lac Retaud, los jardines del castillo de Chillon, la ribera del Oeschinensee y la terraza de la catedral de Berna sobre el meandro del Aare.",
   "value_props": [
    {
     "icon": "💦",
@@ -1286,8 +1330,8 @@ body.is-offline .offline-chip { display: inline-flex; }
    },
    {
     "icon": "🏙️",
-    "title": "Dos ciudades con calma",
-    "text": "Lucerna al atardecer del día 4, cuando los autocares de excursión ya se han ido, y el casco viejo de Ginebra la mañana del regreso. Nada de visitas relámpago entre trenes."
+    "title": "Tres ciudades sin prisa",
+    "text": "Lucerna con una tarde entera el día 5, Berna en una mañana completa el día 6 y el casco viejo de Ginebra el último día. Ninguna se despacha entre dos trenes ni con el equipaje a cuestas."
    },
    {
     "icon": "🌅",
@@ -1298,12 +1342,17 @@ body.is-offline .offline-chip { display: inline-flex; }
     "icon": "🧺",
     "title": "Picnic con vistas caras",
     "text": "Llevando la comida, cada parada se convierte en un comedor con panorámica. Se reservan una comida y una cena para los dos sitios donde el restaurante sí aporta algo."
+   },
+   {
+    "icon": "🛏️",
+    "title": "Seis camas, seis paisajes",
+    "text": "Un apartamento alpino en Ormont-Dessus, un chalé sobre el lago de Brienz, un hostel en Interlaken, un B&B de madera en Brienz, apartamentos junto a Lucerna y el hotel del aeropuerto. Cada uno tiene su ficha con horarios, accesos y su propio hueco de fotos."
    }
   ]
  },
  "history": {
   "title": "Suiza: los guardianes de los pasos",
-  "summary": "Durante mil años, la historia de estas montañas se resume en una pregunta: quién cobra por dejar pasar. Los condes de Saboya construyeron Chillon para controlar el camino entre el norte y el sur de Europa; los campesinos de los valles centrales se confederaron para que nadie lo hiciera con ellos. De ese pulso salió un país que exportó soldados durante tres siglos, se convirtió al protestantismo en Ginebra, se dejó descubrir por los románticos ingleses y acabó inventando el turismo alpino. Cada sitio de este viaje es un capítulo de esa historia, y casi siempre está a la vista.",
+  "summary": "Durante mil años, la historia de estas montañas se resume en una pregunta: quién cobra por dejar pasar. Los condes de Saboya construyeron Chillon para controlar el camino entre el norte y el sur de Europa; los campesinos de los valles centrales se confederaron para que nadie lo hiciera con ellos. De ese pulso salió un país que exportó soldados durante tres siglos, se convirtió al protestantismo en Ginebra, se dejó descubrir por los románticos ingleses y acabó inventando el turismo alpino. Cada sitio de este viaje es un capítulo de esa historia, y casi siempre está a la vista. Berna, que fue la potencia que conquistó medio país y acabó siendo su capital, se cruza el penúltimo día.",
   "periods": [
    {
     "range": "15.000 a.C. — siglo I a.C.",
@@ -1323,22 +1372,22 @@ body.is-offline .offline-chip { display: inline-flex; }
    {
     "range": "1315 — 1515",
     "title": "La Confederación, los mercenarios y el final de la expansión",
-    "text": "Los confederados descubrieron pronto que su infantería de picas podía con la caballería feudal, y ganaron una batalla tras otra: Morgarten en 1315, Sempach en 1386, Grandson y Morat contra Carlos el Temerario en 1476. El resultado fue una reputación militar temible y un negocio de exportación: durante tres siglos, los cantones alquilaron regimientos enteros a las cortes europeas. Lucerna se enriqueció con ello, y de esa época es el puente de la Capilla que se cruza la tarde del día 4: construido hacia 1365 como parte de las fortificaciones de la ciudad, es el puente de madera cubierto más antiguo de Europa. La aventura expansiva terminó en 1515 en Marignano, donde los franceses masacraron a los confederados. A partir de ahí, Suiza dejó de intentar crecer y empezó a practicar la neutralidad que la definiría."
+    "text": "Los confederados descubrieron pronto que su infantería de picas podía con la caballería feudal, y ganaron una batalla tras otra: Morgarten en 1315, Sempach en 1386, Grandson y Morat contra Carlos el Temerario en 1476. El resultado fue una reputación militar temible y un negocio de exportación: durante tres siglos, los cantones alquilaron regimientos enteros a las cortes europeas. Lucerna, que se recorre entera el día 5, se enriqueció con ello, y de esa época es el puente de la Capilla que se cruza la tarde del día 5: construido hacia 1365 como parte de las fortificaciones de la ciudad, es el puente de madera cubierto más antiguo de Europa. La aventura expansiva terminó en 1515 en Marignano, donde los franceses masacraron a los confederados. A partir de ahí, Suiza dejó de intentar crecer y empezó a practicar la neutralidad que la definiría."
    },
    {
     "range": "1536 — 1798",
     "title": "Calvino, Berna y la conquista del Pays de Vaud",
-    "text": "El año 1536 lo cambia todo en los dos extremos de este viaje. En Ginebra, la ciudad adopta la Reforma y la catedral de Saint-Pierre, que se visita la mañana del día 6, es despojada de sus altares, sus estatuas y sus imágenes: queda la piedra desnuda que aún hoy sorprende al entrar. Juan Calvino predicará allí durante veintitrés años y convertirá Ginebra en la Roma protestante, refugio de perseguidos de media Europa. Ese mismo año, Berna aprovecha el desconcierto y conquista todo el Pays de Vaud, incluido Chillon, que deja de ser saboyano para convertirse en fortaleza bernesa durante doscientos sesenta años. Los berneses también se hacen con el Oberland: Adelboden, Lauterbrunnen y Brienz, donde se duerme las noches de los días 2 y 3, pasan a depender de la ciudad del oso. Es la Suiza de las dos velocidades que todavía se nota al conducir: pueblos protestantes, sobrios y ordenados, con una relación muy particular entre la autoridad y la libertad."
+    "text": "El año 1536 lo cambia todo en los dos extremos de este viaje. En Ginebra, la ciudad adopta la Reforma y la catedral de Saint-Pierre, que se visita la mañana del último día, es despojada de sus altares, sus estatuas y sus imágenes: queda la piedra desnuda que aún hoy sorprende al entrar. Juan Calvino predicará allí durante veintitrés años y convertirá Ginebra en la Roma protestante, refugio de perseguidos de media Europa. Ese mismo año, Berna aprovecha el desconcierto y conquista todo el Pays de Vaud, incluido Chillon, que deja de ser saboyano para convertirse en fortaleza bernesa durante doscientos sesenta años. Los berneses también se hacen con el Oberland: Adelboden, Lauterbrunnen y Brienz, donde se duerme la noche del día 4, pasan a depender de la ciudad del oso. Esa ciudad se visita el día 6 y conserva intacta la traza de aquel poder: el casco viejo amurallado sobre el meandro del Aare, los soportales por los que circulaba el comercio, la catedral que empezó católica en 1421 y terminó reformada, y el foso de los osos que da nombre y escudo a la ciudad desde el siglo XVI. Es la Suiza de las dos velocidades que todavía se nota al conducir: pueblos protestantes, sobrios y ordenados, con una relación muy particular entre la autoridad y la libertad."
    },
    {
     "range": "1798 — 1848",
     "title": "Napoleón, el león que muere y el nacimiento del país moderno",
-    "text": "En 1792, los guardias suizos del rey de Francia murieron defendiendo el palacio de las Tullerías durante el asalto revolucionario. Casi treinta años después, en 1821, se talló en un acantilado de arenisca de Lucerna un león agonizante con una lanza clavada en el costado, el Löwendenkmal que se ve el día 4 a un paso del casco viejo. Mark Twain lo llamó el trozo de piedra más triste del mundo y no exageraba demasiado. Entretanto Napoleón había invadido el país, abolido los privilegios de Berna y liberado al Pays de Vaud, que dejó de ser tierra conquistada. Tras décadas de tensión entre cantones católicos y protestantes, una brevísima guerra civil de 1847 desembocó en la Constitución de 1848: por primera vez, un Estado federal de verdad, con una moneda única y un mercado interior. El franco suizo que se maneja en este viaje nació entonces."
+    "text": "En 1792, los guardias suizos del rey de Francia murieron defendiendo el palacio de las Tullerías durante el asalto revolucionario. Casi treinta años después, en 1821, se talló en un acantilado de arenisca de Lucerna un león agonizante con una lanza clavada en el costado, el Löwendenkmal que se ve el día 5 a un paso del casco viejo. Mark Twain lo llamó el trozo de piedra más triste del mundo y no exageraba demasiado. Entretanto Napoleón había invadido el país, abolido los privilegios de Berna y liberado al Pays de Vaud, que dejó de ser tierra conquistada. En 1848, cuando el nuevo Estado federal necesitó capital, la eligió a ella: Berna sigue siéndolo, y por eso el día 6 se atraviesa una ciudad que es a la vez medieval y sede de gobierno. Tras décadas de tensión entre cantones católicos y protestantes, una brevísima guerra civil de 1847 desembocó en la Constitución de 1848: por primera vez, un Estado federal de verdad, con una moneda única y un mercado interior. El franco suizo que se maneja en este viaje nació entonces."
    },
    {
     "range": "1816 — 1905",
     "title": "Los románticos, los ingleses y la invención del turismo alpino",
-    "text": "El verano de 1816 no hubo verano en Europa: la erupción del Tambora oscureció el cielo y una pandilla de escritores ingleses se quedó encerrada junto al Lemán inventando historias. De ahí salió Frankenstein, y de una visita a Chillon salió El prisionero de Chillon, el poema con el que Lord Byron convirtió el castillo del día 1 en parada obligada del Grand Tour; su firma grabada en una columna de las mazmorras sigue allí. Goethe ya había escrito antes sobre la Staubbachfall de Lauterbrunnen, que se ve al final del día 3. A mediados de siglo llegaron los hoteles, los guías y el negocio: la garganta de Rosenlaui, que se recorre el día 4, se abrió al público a finales del XIX con pasarelas y túneles excavados a mano, y Brienz, donde se duerme la noche del día 3, vivió de tallar en madera los recuerdos que compraban aquellos viajeros. En 1888 se inauguró el funicular del Bürgenstock y en 1905 el ascensor de Hammetschwand, ciento cincuenta y tres metros de acero adosados a un acantilado, que se sube el día 5 y que sigue siendo el ascensor exterior más alto de Europa."
+    "text": "El verano de 1816 no hubo verano en Europa: la erupción del Tambora oscureció el cielo y una pandilla de escritores ingleses se quedó encerrada junto al Lemán inventando historias. De ahí salió Frankenstein, y de una visita a Chillon salió El prisionero de Chillon, el poema con el que Lord Byron convirtió el castillo del día 1 en parada obligada del Grand Tour; su firma grabada en una columna de las mazmorras sigue allí. Goethe ya había escrito antes sobre la Staubbachfall de Lauterbrunnen, que se ve al final del día 3, después de alojarse en Berna, donde un joven Einstein formularía la relatividad especial en 1905 en un piso de la Kramgasse por el que se pasa el día 6. A mediados de siglo llegaron los hoteles, los guías y el negocio: la garganta de Rosenlaui, que se recorre el día 4, se abrió al público a finales del XIX con pasarelas y túneles excavados a mano, y Brienz, donde se duerme esa misma noche, vivió de tallar en madera los recuerdos que compraban aquellos viajeros. En 1888 se inauguró el funicular del Bürgenstock y en 1905 el ascensor de Hammetschwand, ciento cincuenta y tres metros de acero adosados a un acantilado, que se sube el día 5 y que sigue siendo el ascensor exterior más alto de Europa."
    },
    {
     "range": "1967 — hoy",
@@ -1354,14 +1403,6 @@ body.is-offline .offline-chip { display: inline-flex; }
   },
   "zoom": 8,
   "markers": [
-   {
-    "day": 1,
-    "name": "Aeropuerto de Ginebra",
-    "coords": {
-     "lat": 46.2271705,
-     "lng": 6.1026324
-    }
-   },
    {
     "day": 1,
     "name": "Castillo de Chillon",
@@ -1403,8 +1444,16 @@ body.is-offline .offline-chip { display: inline-flex; }
     }
    },
    {
+    "day": 1,
+    "name": "Apartamento en Ormont-Dessus (Airbnb)",
+    "coords": {
+     "lat": 46.3514572,
+     "lng": 7.1581571
+    }
+   },
+   {
     "day": 2,
-    "name": "Glacier 3000",
+    "name": "Glacier 3000 (Scex Rouge)",
     "coords": {
      "lat": 46.3539288,
      "lng": 7.2056551
@@ -1420,7 +1469,7 @@ body.is-offline .offline-chip { display: inline-flex; }
    },
    {
     "day": 2,
-    "name": "Garganta de Choleren",
+    "name": "Garganta de Choleren y Pochtenkessel",
     "coords": {
      "lat": 46.5213513,
      "lng": 7.5892226
@@ -1443,8 +1492,16 @@ body.is-offline .offline-chip { display: inline-flex; }
     }
    },
    {
+    "day": 2,
+    "name": "Swiss Chalet Holidays, Ringgenberg",
+    "coords": {
+     "lat": 46.7001675,
+     "lng": 7.8894684
+    }
+   },
+   {
     "day": 3,
-    "name": "Estación de Stechelberg",
+    "name": "Estación de Stechelberg (Schilthornbahn)",
     "coords": {
      "lat": 46.5551144,
      "lng": 7.9017381
@@ -1492,15 +1549,15 @@ body.is-offline .offline-chip { display: inline-flex; }
    },
    {
     "day": 3,
-    "name": "Brunngasse de Brienz",
+    "name": "Walter's Hostel, Interlaken",
     "coords": {
-     "lat": 46.7559454,
-     "lng": 8.0266384
+     "lat": 46.6841135,
+     "lng": 7.8680163
     }
    },
    {
     "day": 4,
-    "name": "Telecabina del Oeschinensee",
+    "name": "Telecabina de Kandersteg (estación del valle)",
     "coords": {
      "lat": 46.497478,
      "lng": 7.68268
@@ -1524,23 +1581,23 @@ body.is-offline .offline-chip { display: inline-flex; }
    },
    {
     "day": 4,
-    "name": "Puente de la Capilla, Lucerna",
+    "name": "Brunngasse de Brienz",
     "coords": {
-     "lat": 47.0516489,
-     "lng": 8.3075351
+     "lat": 46.7559454,
+     "lng": 8.0266384
     }
    },
    {
     "day": 4,
-    "name": "León de Lucerna",
+    "name": "B&B Brienz",
     "coords": {
-     "lat": 47.0584263,
-     "lng": 8.3109151
+     "lat": 46.7560802,
+     "lng": 8.0361142
     }
    },
    {
     "day": 5,
-    "name": "Embarcadero de Lucerna",
+    "name": "Embarcadero de Lucerna (muelle 3)",
     "coords": {
      "lat": 47.0512653,
      "lng": 8.3115661
@@ -1548,7 +1605,7 @@ body.is-offline .offline-chip { display: inline-flex; }
    },
    {
     "day": 5,
-    "name": "Kehrsiten-Bürgenstock",
+    "name": "Kehrsiten-Bürgenstock y el funicular",
     "coords": {
      "lat": 47.0029906,
      "lng": 8.3823474
@@ -1556,7 +1613,7 @@ body.is-offline .offline-chip { display: inline-flex; }
    },
    {
     "day": 5,
-    "name": "Bürgenstock Resort",
+    "name": "Bürgenstock Resort y el Felsenweg",
     "coords": {
      "lat": 46.9967476,
      "lng": 8.3791807
@@ -1571,11 +1628,59 @@ body.is-offline .offline-chip { display: inline-flex; }
     }
    },
    {
-    "day": 6,
-    "name": "Catedral de Saint-Pierre",
+    "day": 5,
+    "name": "Puente de la Capilla y casco viejo de Lucerna",
     "coords": {
-     "lat": 46.2011267,
-     "lng": 6.1485159
+     "lat": 47.0516489,
+     "lng": 8.3075351
+    }
+   },
+   {
+    "day": 5,
+    "name": "León de Lucerna",
+    "coords": {
+     "lat": 47.0584263,
+     "lng": 8.3109151
+    }
+   },
+   {
+    "day": 5,
+    "name": "Anstatthotel Horw",
+    "coords": {
+     "lat": 47.0125507,
+     "lng": 8.3086047
+    }
+   },
+   {
+    "day": 6,
+    "name": "Zytglogge y los soportales de Berna",
+    "coords": {
+     "lat": 46.9480298,
+     "lng": 7.4477977
+    }
+   },
+   {
+    "day": 6,
+    "name": "Catedral de Berna",
+    "coords": {
+     "lat": 46.9472395,
+     "lng": 7.451531
+    }
+   },
+   {
+    "day": 6,
+    "name": "Foso de los Osos y el meandro del Aare",
+    "coords": {
+     "lat": 46.9481216,
+     "lng": 7.4594521
+    }
+   },
+   {
+    "day": 6,
+    "name": "Rosengarten",
+    "coords": {
+     "lat": 46.9514886,
+     "lng": 7.4600729
     }
    },
    {
@@ -1584,6 +1689,22 @@ body.is-offline .offline-chip { display: inline-flex; }
     "coords": {
      "lat": 46.2073889,
      "lng": 6.1559028
+    }
+   },
+   {
+    "day": 6,
+    "name": "ibis budget Genève Palexpo Aéroport",
+    "coords": {
+     "lat": 46.234191,
+     "lng": 6.1173335
+    }
+   },
+   {
+    "day": 7,
+    "name": "Catedral de Saint-Pierre",
+    "coords": {
+     "lat": 46.2011267,
+     "lng": 6.1485159
     }
    }
   ]
@@ -1601,35 +1722,42 @@ body.is-offline .offline-chip { display: inline-flex; }
    "date": "2026-08-11",
    "weekday": "martes",
    "title": "Glacier 3000 y el valle de Adelboden",
-   "summary": "Primera cabina al glaciar para cruzar el Peak Walk sin gente, y por la tarde el largo traslado por el Simmental hasta Adelboden: la garganta de Choleren, el pueblo y las cascadas de Engstligen. Noche en Interlaken."
+   "summary": "Primera cabina al glaciar para cruzar el Peak Walk sin gente, y por la tarde el largo traslado por el Simmental hasta Adelboden: la garganta de Choleren, el pueblo y las cascadas de Engstligen. Noche en Ringgenberg."
   },
   {
    "day": 3,
    "date": "2026-08-12",
    "weekday": "miércoles",
    "title": "Schilthorn, Mürren y el valle de las 72 cascadas",
-   "summary": "Subida temprana desde Stechelberg con parada en el Thrill Walk de Birg, mirador del Piz Gloria, comida en Mürren, las cascadas interiores del Trümmelbach y Lauterbrunnen al atardecer. Noche en Brienz."
+   "summary": "Subida temprana desde Stechelberg con parada en el Thrill Walk de Birg, mirador del Piz Gloria, comida en Mürren, las cascadas interiores del Trümmelbach y Lauterbrunnen al atardecer. Noche en Interlaken."
   },
   {
    "day": 4,
    "date": "2026-08-13",
    "weekday": "jueves",
-   "title": "Oeschinensee, Rosenlaui y Lucerna al anochecer",
-   "summary": "El día más largo: el lago turquesa de Kandersteg con la primera franja horaria, la garganta glaciar de Rosenlaui a media tarde y llegada a Lucerna para pasear el casco viejo con la luz del final del día."
+   "title": "Oeschinensee y el valle glaciar de Rosenlaui",
+   "summary": "El lago turquesa de Kandersteg con la primera franja horaria del día y, por la tarde, la garganta de Rosenlaui sin prisa. Llegada temprana a Brienz para el pueblo de los talladores y el lago al atardecer."
   },
   {
    "day": 5,
    "date": "2026-08-14",
    "weekday": "viernes",
-   "title": "Bürgenstock, Hammetschwand y traslado a Ginebra",
-   "summary": "Travesía en barco del lago de los Cuatro Cantones, funicular de 1888, el Felsenweg colgado del acantilado y el ascensor exterior más alto de Europa. Por la tarde, tres horas de autopista hasta Ginebra."
+   "title": "Bürgenstock, Hammetschwand y Lucerna",
+   "summary": "Travesía en barco del lago de los Cuatro Cantones, funicular de 1888, el Felsenweg colgado del acantilado y el ascensor exterior más alto de Europa. Toda la tarde en el casco viejo de Lucerna. Noche en Horw."
   },
   {
    "day": 6,
    "date": "2026-08-15",
    "weekday": "sábado",
-   "title": "Casco viejo de Ginebra y vuelta",
-   "summary": "Mañana tranquila en la ciudad alta: Bourg-de-Four, la catedral de Saint-Pierre por fuera, el muro de la Reforma, el Jet d'Eau y el paseo del lago. Devolución del coche y vuelo de las 15:15."
+   "title": "Berna y bajada a Ginebra",
+   "summary": "Mañana entera en la capital: el reloj astronómico, los soportales, la catedral, los osos y el mirador del Rosengarten. Por la tarde, autopista hasta Ginebra y el Jet d'Eau al anochecer."
+  },
+  {
+   "day": 7,
+   "date": "2026-08-16",
+   "weekday": "domingo",
+   "title": "Casco viejo de Ginebra y vuelta a casa",
+   "summary": "Mañana tranquila en la ciudad alta: Bourg-de-Four, la catedral de Saint-Pierre por fuera y el muro de la Reforma. Devolución del coche y vuelo de regreso."
   }
  ],
  "days": [
@@ -1721,6 +1849,7 @@ body.is-offline .offline-chip { display: inline-flex; }
      "title": "Llegada al apartamento de Ormont-Dessus",
      "description": "Diez minutos de bajada desde el lago. Merece la pena parar en el Coop de Les Diablerets antes de que cierre para reponer pan, fruta y agua para los días siguientes.",
      "type": "checkin",
+     "place_id": "alojamiento-ormont-dessus",
      "duration_min": 40
     }
    ],
@@ -1795,6 +1924,20 @@ body.is-offline .offline-chip { display: inline-flex; }
      "tips": "Ojo con la distancia real: desde Les Diablerets son unos treinta y cinco minutos de coche por el Col des Mosses en cada sentido, o sea, hora y media larga contando la visita. No queda de camino a nada del itinerario, así que solo tiene sentido si el día 1 va sobrado o si el mal tiempo obliga a suspender el Glacier 3000 del día 2 y hace falta un plan de reserva a menor altitud.",
      "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.4688108,7.1351172",
      "verified_at": null
+    },
+    {
+     "id": "alojamiento-ormont-dessus",
+     "name": "Apartamento en Ormont-Dessus (Airbnb)",
+     "coords": {
+      "lat": 46.3514572,
+      "lng": 7.1581571
+     },
+     "review": "La base de la primera noche, en el municipio que engloba Les Diablerets y el Col du Pillon. Es la ubicación ideal para el arranque del viaje: deja el teleférico del Glacier 3000 a unos diez minutos en coche, de modo que el día 2 se puede estar en la primera cabina de las nueve sin madrugar de forma heroica. El pueblo tiene supermercado, panadería y un par de restaurantes, y a esa altitud las noches de agosto refrescan bastante.",
+     "hours": "Horario de entrada según lo pactado con el anfitrión",
+     "price": "Reserva de Airbnb ya pagada",
+     "tips": "Al ser Airbnb, conviene tener descargadas las instrucciones de acceso y el contacto del anfitrión antes de salir de Ginebra, porque en el valle la cobertura flojea. La coordenada apunta al centro del municipio: la dirección exacta está en la reserva. Merece la pena pasar por el Coop de Les Diablerets antes de subir, porque cierra pronto y es la última compra fácil antes de dos días de montaña.",
+     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.3514572,7.1581571",
+     "verified_at": null
     }
    ],
    "restaurants": [
@@ -1847,7 +1990,7 @@ body.is-offline .offline-chip { display: inline-flex; }
   {
    "day": 2,
    "date": "2026-08-11",
-   "title": "Glacier 3000 y el valle de Adelboden",
+   "title": "Glacier 3000, Adelboden y bajada al lago de Brienz",
    "hero_image": "",
    "timeline": [
     {
@@ -1938,17 +2081,18 @@ body.is-offline .offline-chip { display: inline-flex; }
     {
      "time": "19:20",
      "icon": "🚗",
-     "title": "Adelboden → Interlaken",
-     "description": "Vuelta a Frutigen, autopista por Spiez y llegada a Interlaken. Unos 65 km y poco más de una hora, con el lago de Thun a la derecha en el último tramo.",
+     "title": "Adelboden → Ringgenberg",
+     "description": "Vuelta a Frutigen, autopista por Spiez y Interlaken hasta la orilla del lago de Brienz. Unos 75 km con el lago de Thun acompañando en el tramo final.",
      "type": "transport",
-     "duration_min": 70
+     "duration_min": 80
     },
     {
-     "time": "20:30",
+     "time": "20:40",
      "icon": "🛏️",
-     "title": "Llegada a Walter's Hostel",
-     "description": "A diez minutos a pie de la estación de Interlaken Ost, en zona residencial tranquila. Tiene cocina común, así que es buen sitio para preparar los bocadillos del día siguiente.",
+     "title": "Llegada a Swiss Chalet Holidays, Ringgenberg",
+     "description": "Pueblo tranquilo sobre el lago de Brienz, a seis kilómetros de Interlaken. Las habitaciones tienen cocina, así que es el sitio donde dejar preparados los bocadillos del día del Schilthorn.",
      "type": "checkin",
+     "place_id": "alojamiento-ringgenberg",
      "duration_min": 30
     }
    ],
@@ -2023,6 +2167,20 @@ body.is-offline .offline-chip { display: inline-flex; }
      "tips": "Para ver el salto entero desde arriba hay un teleférico a Engstligenalp, pero a estas horas ya no compensa y la vista desde abajo es la buena. El sendero directo entre Unter dem Birg y Engstligenalp estuvo cerrado el invierno pasado por desprendimientos: interesa mirar el estado actual en la oficina de turismo antes de plantearse subir andando. Con la luz de las seis o las siete de la tarde el agua queda a contraluz y sale muy bien en foto.",
      "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.4539395,7.5607365",
      "verified_at": "2026-07-31"
+    },
+    {
+     "id": "alojamiento-ringgenberg",
+     "name": "Swiss Chalet Holidays, Ringgenberg",
+     "coords": {
+      "lat": 46.7001675,
+      "lng": 7.8894684
+     },
+     "review": "Apartamentos en Ringgenberg, un pueblo tranquilo sobre la orilla del lago de Brienz a seis kilómetros de Interlaken, con castillo e iglesia en lo alto y el lago abajo. Las habitaciones llevan cocina propia, incluida placa de inducción, lo que encaja perfectamente con el plan de llevar la comida: es el sitio donde preparar los bocadillos del día del Schilthorn. Está justo enfrente de la parada de autobús de Anhöhe Burgseeli, con enlace a las dos estaciones de Interlaken.",
+     "hours": "Entrada según la reserva. Noche del 11 al 12 de agosto",
+     "price": "224 € la noche, ya reservado",
+     "tips": "Está a pie de carretera principal pero varios huéspedes coinciden en que no se oye el tráfico desde dentro. Merece la pena preguntar en la llegada si entregan tarjeta de huésped de la región de Interlaken, que da transporte local gratuito y podría servir para el día siguiente. El Burgseeli, un lago pequeño de agua templada a diez minutos andando, es de los pocos de la zona donde el baño resulta agradable de verdad.",
+     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.7001675,7.8894684",
+     "verified_at": "2026-07-31"
     }
    ],
    "restaurants": [
@@ -2054,17 +2212,17 @@ body.is-offline .offline-chip { display: inline-flex; }
     }
    ],
    "alternative_plans": {
-    "more_time": "Si el glaciar se despacha antes de lo previsto, cabe una parada en Gstaad de camino, que queda a pie de ruta, o alargar el circuito de Choleren enlazando con el sendero del Tschentbach y sus pozas de agua clara.",
+    "more_time": "Si el glaciar se despacha antes de lo previsto, cabe una parada en Gstaad de camino, que queda a pie de ruta, o alargar el circuito de Choleren enlazando con el sendero del Tschentbach y sus pozas de agua clara. Llegando con luz a Ringgenberg, el Burgseeli es un lago pequeño de agua templada a diez minutos del alojamiento, de los pocos de la zona donde bañarse resulta agradable.",
     "less_time": "El primer recorte es el paseo por el pueblo de Adelboden, que es lo más prescindible del día. Si aun así va apurado, Engstligen se puede ver desde el mirador junto al aparcamiento en veinte minutos en lugar de una hora.",
     "rainy_day": "Con mal tiempo, el Glacier 3000 pierde todo el sentido: sin visibilidad se pagan 90 CHF por ver niebla. La alternativa es bajar directamente al valle y dedicar el día a las dos gargantas de Adelboden, que con agua abundante están incluso mejor, y añadir el Blausee, un lago de agua transparente a cubierto de bosque cerca de Kandergrund.",
     "with_kids": "El Glacier Walk sobre la nieve en pleno agosto y el Alpine Coaster, el tobogán de montaña más alto del mundo, son las dos bazas del día para una adolescente. La bajada del coaster cuesta 9 CHF y se paga aparte."
    },
    "logistics": {
-    "driving_km": 185,
-    "driving_time_min": 205,
+    "driving_km": 195,
+    "driving_time_min": 215,
     "walking_km": 6,
     "walking_time_min": 140,
-    "public_transport": "El autobús 180 conecta Les Diablerets con el Col du Pillon. Adelboden se alcanza en tren hasta Frutigen y autobús AFA 230, que además para en la garganta de Choleren. Encadenarlo todo en un día con horarios de verano es posible pero deja muy poco margen."
+    "public_transport": "El autobús 180 conecta Les Diablerets con el Col du Pillon. Adelboden se alcanza en tren hasta Frutigen y autobús AFA 230, que además para en la garganta de Choleren. Ringgenberg tiene parada de autobús propia con enlace a las dos estaciones de Interlaken."
    },
    "info": {
     "travel_tips": [
@@ -2094,10 +2252,10 @@ body.is-offline .offline-chip { display: inline-flex; }
     {
      "time": "07:10",
      "icon": "🚗",
-     "title": "Salida de Interlaken con el equipaje",
-     "description": "Treinta y cinco minutos hasta Stechelberg, al fondo del valle de Lauterbrunnen. Hoy también se cambia de alojamiento, así que las maletas van en el coche desde primera hora.",
+     "title": "Salida de Ringgenberg con el equipaje",
+     "description": "Cuarenta minutos hasta Stechelberg, al fondo del valle de Lauterbrunnen, pasando por Interlaken y Wilderswil. Hoy también se cambia de alojamiento, así que las maletas van en el coche desde primera hora.",
      "type": "checkout",
-     "duration_min": 40
+     "duration_min": 45
     },
     {
      "time": "07:55",
@@ -2180,17 +2338,18 @@ body.is-offline .offline-chip { display: inline-flex; }
     {
      "time": "19:40",
      "icon": "🚗",
-     "title": "Lauterbrunnen → Brienz",
-     "description": "Cincuenta minutos por Interlaken y la orilla norte del lago de Brienz, con el agua de un turquesa que parece retocado.",
+     "title": "Lauterbrunnen → Interlaken",
+     "description": "Veinticinco minutos por Wilderswil, de vuelta al llano entre los dos lagos. El trayecto más corto de todo el viaje.",
      "type": "transport",
-     "duration_min": 55
+     "duration_min": 25
     },
     {
-     "time": "20:40",
+     "time": "20:10",
      "icon": "🛏️",
-     "title": "Llegada al alojamiento de Brienz",
-     "description": "Si aún queda luz, merece la pena acercarse al paseo del lago o a la Brunngasse, la calle de casas talladas del pueblo, antes de cenar.",
+     "title": "Llegada a Walter's Hostel, Interlaken",
+     "description": "A diez minutos a pie de la estación de Interlaken Ost, en zona residencial tranquila. Tiene cocina común y lavadora: buen momento para poner una lavadora a mitad de viaje y preparar la comida de mañana.",
      "type": "checkin",
+     "place_id": "alojamiento-walters-interlaken",
      "duration_min": 40
     }
    ],
@@ -2283,17 +2442,17 @@ body.is-offline .offline-chip { display: inline-flex; }
      "verified_at": "2026-07-31"
     },
     {
-     "id": "brunngasse-brienz",
-     "name": "Brunngasse de Brienz",
+     "id": "alojamiento-walters-interlaken",
+     "name": "Walter's Hostel, Interlaken",
      "coords": {
-      "lat": 46.7559454,
-      "lng": 8.0266384
+      "lat": 46.6841135,
+      "lng": 7.8680163
      },
-     "review": "Una calle corta de casas de madera talladas, muchas de ellas con siglos encima, considerada de las más bonitas de Suiza y visitada por muy poca gente. Brienz vive desde el siglo XIX de la talla en madera: fue aquí donde se fabricaban los recuerdos que compraban los viajeros románticos, y todavía quedan talleres en activo. Se recorre en veinte minutos y es un buen cierre de día si se llega con luz.",
-     "hours": "Acceso libre. Es una calle habitada",
-     "price": "Gratuito",
-     "tips": "Vive gente en esas casas, así que conviene bajar la voz y no asomarse a las ventanas. Está a unos minutos a pie del embarcadero y del paseo del lago, donde el atardecer sobre el agua compensa el madrugón del día siguiente.",
-     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.7559454,8.0266384",
+     "review": "Alojamiento de habitaciones privadas con baño y cocina compartidos, en una zona residencial tranquila a unos diez minutos a pie de la estación de Interlaken Ost. Las reseñas coinciden en tres cosas: habitaciones amplias y limpias, un anfitrión atento y una cocina común bien equipada. Varios huéspedes mencionan que les entregaron la tarjeta de visitante que da transporte gratuito por la zona. La pega recurrente es el calor en pleno verano, porque no hay aire acondicionado.",
+     "hours": "Entrada según la reserva. Noche del 12 al 13 de agosto",
+     "price": "95 € la noche, ya reservado",
+     "tips": "Conviene pedir la tarjeta de visitante al llegar, porque cubre el transporte local. La cocina y la lavadora son la oportunidad del viaje para poner una lavadora a mitad de recorrido y para dejar preparada la comida del día del Oeschinensee. Como no hay aire acondicionado y agosto aprieta, merece la pena pedir habitación en la planta baja o con balcón.",
+     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.6841135,7.8680163",
      "verified_at": "2026-07-31"
     }
    ],
@@ -2328,15 +2487,15 @@ body.is-offline .offline-chip { display: inline-flex; }
    "alternative_plans": {
     "more_time": "Si el Schilthorn se ve rápido, la bajada a pie de Mürren a Gimmelwald, una hora entre prados y granjas, es de los paseos más agradecidos de la región. Otra opción es volver del valle por Grütschalp y el tren de cornisa hasta Lauterbrunnen, un recorrido distinto al de la ida.",
     "less_time": "Lo primero que se recorta es la parada larga en Mürren, que puede quedarse en cuarenta minutos comiendo el picnic en un banco. Los Trümmelbachfälle se ven en cincuenta minutos si se sube en ascensor y se baja directo, sin detenerse en todas las plataformas.",
-    "rainy_day": "Con el valle cerrado, el Schilthorn no compensa. Los Trümmelbachfälle, en cambio, están bajo tierra y con lluvia llevan aún más caudal, así que ganan. El plan de sustitución sería alargarlos, añadir el paseo del valle hasta la Staubbachfall y dedicar la tarde al lago de Thun o al casco viejo de Thun, con su castillo.",
+    "rainy_day": "Con el valle cerrado, el Schilthorn no compensa. Los Trümmelbachfälle, en cambio, están bajo tierra y con lluvia llevan aún más caudal, así que ganan. El plan de sustitución sería alargarlos, añadir el paseo del valle hasta la Staubbachfall y dedicar la tarde a Interlaken, con el paseo del Höheweg y el prado del Höhematte, o al casco viejo de Thun con su castillo.",
     "with_kids": "El Thrill Walk de Birg, con el suelo de cristal y la pasarela de cable, y la exposición Spy World de James Bond son las dos cosas del día pensadas exactamente para una adolescente. En Lauterbrunnen suele haber parapentes aterrizando en el prado del pueblo a última hora."
    },
    "logistics": {
-    "driving_km": 95,
-    "driving_time_min": 130,
+    "driving_km": 70,
+    "driving_time_min": 100,
     "walking_km": 7,
     "walking_time_min": 165,
-    "public_transport": "Desde Interlaken Ost hay tren a Lauterbrunnen en 20 minutos y autobús 141 hasta Stechelberg. Es una de las pocas jornadas del viaje que funcionaría perfectamente sin coche, y de hecho el alojamiento de Interlaken entrega tarjeta de huésped con el transporte local incluido."
+    "public_transport": "Desde Interlaken Ost hay tren a Lauterbrunnen en 20 minutos y autobús 141 hasta Stechelberg. Es una de las pocas jornadas del viaje que funcionaría perfectamente sin coche, y tanto el alojamiento de Ringgenberg como el de Interlaken suelen entregar tarjeta de huésped con el transporte local incluido."
    },
    "info": {
     "travel_tips": [
@@ -2346,9 +2505,9 @@ body.is-offline .offline-chip { display: inline-flex; }
      "Dentro de las cascadas hace unos diez grados y el ambiente está saturado de agua pulverizada. Una capa impermeable ligera cambia bastante la experiencia."
     ],
     "access": [
-     "Interlaken a Stechelberg: 25 km por Wilderswil y Lauterbrunnen, unos 35 minutos. La carretera termina en Stechelberg.",
+     "Ringgenberg a Stechelberg: 32 km por Interlaken, Wilderswil y Lauterbrunnen, unos 40 minutos. La carretera termina en Stechelberg.",
      "Los Trümmelbachfälle están a 3 km de Lauterbrunnen en dirección a Stechelberg, con aparcamiento propio.",
-     "Lauterbrunnen a Brienz: 45 km por Interlaken y la orilla norte del lago, unos 50 minutos."
+     "Lauterbrunnen a Interlaken: 20 km por Wilderswil, unos 25 minutos."
     ],
     "facts": [
      "El valle de Lauterbrunnen tiene setenta y dos cascadas censadas, de ahí su apodo. Es un valle glaciar en U de manual, con paredes de trescientos metros a plomo.",
@@ -2360,16 +2519,16 @@ body.is-offline .offline-chip { display: inline-flex; }
   {
    "day": 4,
    "date": "2026-08-13",
-   "title": "Oeschinensee, Rosenlaui y Lucerna al anochecer",
+   "title": "Oeschinensee y el valle glaciar de Rosenlaui",
    "hero_image": "",
    "timeline": [
     {
-     "time": "06:50",
+     "time": "07:00",
      "icon": "🚗",
-     "title": "Salida de Brienz hacia Kandersteg",
-     "description": "El madrugón más serio del viaje, y con motivo: la franja horaria del telecabina está reservada y el aparcamiento premium exige entrar antes de las 9:30. Ochenta y cinco kilómetros por Interlaken, Spiez y Frutigen.",
+     "title": "Salida de Interlaken hacia Kandersteg",
+     "description": "El madrugón más serio del viaje, y con motivo: la franja horaria del telecabina está reservada y el aparcamiento premium exige entrar antes de las 9:30. Sesenta y cinco kilómetros por Spiez y Frutigen.",
      "type": "checkout",
-     "duration_min": 85
+     "duration_min": 70
     },
     {
      "time": "08:15",
@@ -2377,6 +2536,7 @@ body.is-offline .offline-chip { display: inline-flex; }
      "title": "Llegada a la estación del valle",
      "description": "Aparcamiento P1-P3 junto a la estación, abierto de 7:00 a 21:00. Con la plaza premium reservada online hay que estar dentro antes de las 9:30. Sin reserva, en agosto suele agotarse hacia las once.",
      "type": "transport",
+     "place_id": "oeschinensee-talstation",
      "duration_min": 15
     },
     {
@@ -2391,7 +2551,7 @@ body.is-offline .offline-chip { display: inline-flex; }
      "time": "08:50",
      "icon": "🥾",
      "title": "Bajada al lago",
-     "description": "Treinta minutos por una pista ancha y cómoda, apta incluso para carritos, entre prados alpinos y bosque, con el Doldenhorn y el Oeschinenhorn dominando el valle.",
+     "description": "Pista ancha y cómoda, apta incluso para carritos, entre prados alpinos y bosque, con el Doldenhorn y el Oeschinenhorn dominando el valle.",
      "type": "transport",
      "duration_min": 30
     },
@@ -2408,7 +2568,7 @@ body.is-offline .offline-chip { display: inline-flex; }
      "time": "11:55",
      "icon": "🥾",
      "title": "Vuelta a la estación de montaña",
-     "description": "Treinta minutos de subida suave. Otra opción es el tobogán de montaña, que baja desde arriba y cuesta 7 CHF por descenso a partir de la una.",
+     "description": "Subida suave por el mismo camino. Otra opción es el tobogán de montaña, que baja desde arriba y cuesta 7 CHF por descenso a partir de la una.",
      "type": "transport",
      "duration_min": 35
     },
@@ -2416,7 +2576,7 @@ body.is-offline .offline-chip { display: inline-flex; }
      "time": "12:35",
      "icon": "🛣️",
      "title": "Kandersteg → valle de Rosenlaui",
-     "description": "Casi dos horas de coche por Frutigen, Spiez, Interlaken, la orilla del lago de Brienz y Meiringen, y desde ahí carretera estrecha valle arriba por el Reichenbachtal. El último tramo es angosto y de peaje.",
+     "description": "El trayecto más largo del día, por Frutigen, Spiez, Interlaken, la orilla del lago de Brienz y Meiringen, y desde ahí carretera estrecha valle arriba por el Reichenbachtal. El último tramo es angosto y de peaje.",
      "type": "transport",
      "duration_min": 110
     },
@@ -2424,63 +2584,61 @@ body.is-offline .offline-chip { display: inline-flex; }
      "time": "14:30",
      "icon": "🏔️",
      "title": "Garganta glaciar de Rosenlaui",
-     "description": "Recorrido de hora y media, algo más corto de lo que pide el sitio, por 573 metros de pasarelas, más de doscientos escalones y túneles excavados en la roca, con 155 metros de desnivel y vuelta por el bosque.",
+     "description": "Ahora con tiempo de sobra: 573 metros de pasarelas, más de doscientos escalones y túneles excavados en la roca, con 155 metros de desnivel y vuelta por el bosque. Dos horas y media dan para hacer el circuito sin prisa, pararse en cada mirador y tomar algo en el café de la entrada.",
      "type": "visit",
      "place_id": "rosenlaui",
-     "duration_min": 95
+     "duration_min": 150
     },
     {
-     "time": "16:15",
+     "time": "17:05",
      "icon": "🚗",
-     "title": "Rosenlaui → Horw",
-     "description": "Bajada a Meiringen y subida al paso del Brünig, con Sarnen y el lago de Sarnen antes de llegar a la orilla del lago de los Cuatro Cantones. Setenta y cinco kilómetros de carretera panorámica.",
+     "title": "Rosenlaui → Brienz",
+     "description": "Bajada del valle a Meiringen y veinte kilómetros más por la orilla del lago. El traslado más corto de toda la tarde, una de las ventajas de dormir en Brienz.",
      "type": "transport",
-     "duration_min": 85
+     "duration_min": 35
     },
     {
      "time": "17:45",
      "icon": "🛏️",
-     "title": "Anstatthotel Horw",
-     "description": "Check-in por aplicación, sin recepción, lo que da mucha flexibilidad de horario. Está a ocho kilómetros del centro de Lucerna. Buen momento para una ducha antes de bajar a la ciudad.",
+     "title": "Llegada al B&B Brienz",
+     "description": "Chalé antiguo en la ladera sobre el pueblo, con vistas al lago y el tren de vapor del Rothorn pasando a unos metros. La subida desde la estación es empinada, así que mejor llegar en coche con el equipaje.",
      "type": "checkin",
-     "duration_min": 40
+     "place_id": "alojamiento-bb-brienz",
+     "duration_min": 45
     },
     {
-     "time": "18:30",
-     "icon": "🌉",
-     "title": "Lucerna: puente de la Capilla y casco viejo",
-     "description": "Quince minutos en coche y aparcamiento subterráneo bajo la estación. El puente de madera cubierto más antiguo de Europa, la torre octogonal del Wasserturm, las plazas con fachadas pintadas del casco viejo y la muralla del Museggmauer al fondo.",
+     "time": "18:40",
+     "icon": "🪵",
+     "title": "Brunngasse y el lago al atardecer",
+     "description": "Con el día recuperado, ahora sí hay tiempo para el pueblo: la calle de casas talladas, los talleres de madera y el paseo del embarcadero con el lago encendido por la luz de la tarde.",
      "type": "visit",
-     "place_id": "kapellbrucke",
-     "duration_min": 90
+     "place_id": "brunngasse-brienz",
+     "duration_min": 75
     },
     {
      "time": "20:00",
-     "icon": "🦁",
-     "title": "El León de Lucerna",
-     "description": "Quince minutos andando desde el casco viejo. Un león agonizante de diez metros tallado en el acantilado en 1821 en memoria de los guardias suizos muertos en 1792. Mark Twain lo llamó el trozo de piedra más triste del mundo.",
-     "type": "visit",
-     "place_id": "lowendenkmal",
-     "duration_min": 30
-    },
-    {
-     "time": "20:40",
-     "icon": "🍽️",
-     "title": "Cena en el casco viejo",
-     "description": "La única cena de restaurante planificada del viaje, y toca en la ciudad donde tiene más sentido: cocina tradicional de Lucerna a orillas del Reuss.",
+     "icon": "🧺",
+     "title": "Cena tranquila",
+     "description": "El Coop de Brienz queda a un paso del alojamiento y el B&B tiene cocina común. Después de un día de cinco horas de coche, la opción sensata es cenar sin salir.",
      "type": "meal",
-     "duration_min": 80
-    },
-    {
-     "time": "22:10",
-     "icon": "🚗",
-     "title": "Vuelta a Horw",
-     "description": "Quince minutos de coche. El aparcamiento de la estación está abierto las 24 horas.",
-     "type": "transport",
-     "duration_min": 20
+     "duration_min": 60
     }
    ],
    "places": [
+    {
+     "id": "oeschinensee-talstation",
+     "name": "Telecabina de Kandersteg (estación del valle)",
+     "coords": {
+      "lat": 46.497478,
+      "lng": 7.68268
+     },
+     "review": "Estación moderna con centro de información, máquinas de billetes, aseos y ocho puntos de recarga eléctrica en el aparcamiento P2. Desde aquí sale la cabina de ocho plazas que salva los 480 metros de desnivel hasta la estación de montaña. La carretera privada que llega a la orilla del lago está cerrada al tráfico, así que no hay forma de acercarse en coche.",
+     "hours": "De 8:30 a 18:00 del 9 de mayo al 20 de septiembre de 2026. Aparcamiento abierto de 7:00 a 21:00",
+     "price": "Aparcamiento normal de pago; plaza premium reservable por 10 CHF",
+     "tips": "Las plazas se agotan hacia las once en verano y los fines de semana, de ahí la reserva. El acceso está limitado a vehículos de hasta 5 metros de largo y 2 de alto, sin problema con un coche pequeño. El billete de bajada tiene una tarifa de enlace con descuento que solo se vende en la máquina de la estación de montaña.",
+     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.497478,7.68268",
+     "verified_at": "2026-07-31"
+    },
     {
      "id": "oeschinensee",
      "name": "Oeschinensee",
@@ -2494,20 +2652,6 @@ body.is-offline .offline-chip { display: inline-flex; }
      "tips": "Del 20 de junio al 20 de septiembre la reserva de franja horaria para la subida es OBLIGATORIA, incluso teniendo billete: sin ella no se sube, y si las franjas están completas no hay alternativa. Se reserva en la tienda online oficial y se puede cambiar gratis hasta tres veces. La plaza de aparcamiento premium cuesta 10 CHF, solo se puede reservar junto con una franja de subida entre las 8:30 y las 10:00, y obliga a entrar antes de las 9:30. Siendo coche de alquiler, el campo de la matrícula se deja en blanco y el sistema la reconoce sola al escanear el código QR. El billete de la niña se canjea en el centro de información de la estación del valle enseñando la Junior Card. Los drones están prohibidos por orden judicial en toda la zona.",
      "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.4975584,7.7140099",
      "website": "https://www.oeschinensee.ch",
-     "verified_at": "2026-07-31"
-    },
-    {
-     "id": "oeschinensee-talstation",
-     "name": "Telecabina de Kandersteg (estación del valle)",
-     "coords": {
-      "lat": 46.497478,
-      "lng": 7.68268
-     },
-     "review": "Estación moderna con centro de información, máquinas de billetes, aseos y ocho puntos de recarga eléctrica en el aparcamiento P2. Desde aquí sale la cabina de ocho plazas que salva los 480 metros de desnivel hasta la estación de montaña. La carretera privada que llega a la orilla del lago está cerrada al tráfico, así que no hay forma de acercarse en coche.",
-     "hours": "De 8:30 a 18:00 del 9 de mayo al 20 de septiembre de 2026. Aparcamiento abierto de 7:00 a 21:00",
-     "price": "Aparcamiento normal de pago; plaza premium reservable por 10 CHF",
-     "tips": "Las plazas se agotan hacia las once en verano y los fines de semana, de ahí la reserva. El acceso está limitado a vehículos de hasta 5 metros de largo y 2 de alto, sin problema con un coche pequeño. El billete de bajada tiene una tarifa de enlace con descuento que solo se vende en la máquina de la estación de montaña.",
-     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.497478,7.68268",
      "verified_at": "2026-07-31"
     },
     {
@@ -2526,31 +2670,31 @@ body.is-offline .offline-chip { display: inline-flex; }
      "verified_at": null
     },
     {
-     "id": "kapellbrucke",
-     "name": "Puente de la Capilla y casco viejo de Lucerna",
+     "id": "brunngasse-brienz",
+     "name": "Brunngasse de Brienz",
      "coords": {
-      "lat": 47.0516489,
-      "lng": 8.3075351
+      "lat": 46.7559454,
+      "lng": 8.0266384
      },
-     "review": "El puente de madera cubierto más antiguo de Europa, levantado hacia 1365 como parte de las fortificaciones de la ciudad y con una serie de tablas pintadas del siglo XVII bajo el tejado, buena parte de ellas perdidas en el incendio de 1993 y sustituidas después. A su lado, la torre octogonal del Wasserturm. Alrededor, un casco viejo compacto de plazas con fachadas pintadas, la muralla del Museggmauer con nueve torres y las dos agujas de la Hofkirche al otro lado del río. A esta hora, con los autocares de excursión ya de vuelta, se pasea con calma.",
-     "hours": "Acceso libre las 24 horas. Iluminado de noche",
+     "review": "Una calle corta de casas de madera talladas, muchas de ellas con siglos encima, considerada de las más bonitas de Suiza y visitada por muy poca gente. Brienz vive desde el siglo XIX de la talla en madera: fue aquí donde se fabricaban los recuerdos que compraban los viajeros románticos, y todavía quedan talleres en activo. Se recorre en veinte minutos y es un buen cierre de día si se llega con luz.",
+     "hours": "Acceso libre. Es una calle habitada",
      "price": "Gratuito",
-     "tips": "El aparcamiento subterráneo Bahnhofparking P1+P2, bajo la estación y frente al embarcadero, está abierto las 24 horas y ronda los 16 CHF por cuatro horas. Es el mismo del día siguiente, así que sirve de reconocimiento. Las tiendas de recuerdos de los alrededores del puente son de las más caras de Suiza. Los relojes de cuco, por cierto, no son suizos sino de la Selva Negra alemana.",
-     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=47.0516489,8.3075351",
+     "tips": "Vive gente en esas casas, así que conviene bajar la voz y no asomarse a las ventanas. Está a unos minutos a pie del embarcadero y del paseo del lago, donde el atardecer sobre el agua compensa el madrugón del día siguiente.",
+     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.7559454,8.0266384",
      "verified_at": "2026-07-31"
     },
     {
-     "id": "lowendenkmal",
-     "name": "León de Lucerna",
+     "id": "alojamiento-bb-brienz",
+     "name": "B&B Brienz",
      "coords": {
-      "lat": 47.0584263,
-      "lng": 8.3109151
+      "lat": 46.7560802,
+      "lng": 8.0361142
      },
-     "review": "Un león moribundo de diez metros tallado directamente en un acantilado de arenisca entre 1820 y 1821, con una lanza rota clavada en el costado y una pata protegiendo el escudo de la flor de lis. Conmemora a los guardias suizos que murieron defendiendo las Tullerías en 1792. El diseño es del danés Bertel Thorvaldsen y la talla, de Lukas Ahorn. La escala real sorprende: en las fotos no se aprecia lo enorme que es. El estanque a sus pies y el parquecillo alrededor invitan a sentarse un rato.",
-     "hours": "Acceso libre las 24 horas",
-     "price": "Gratuito",
-     "tips": "Está a unos quince minutos andando del puente de la Capilla, cuesta arriba. De noche está iluminado y a esa hora hay mucha menos gente que durante el día, cuando llegan los grupos organizados. Hay aseos públicos en el recinto.",
-     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=47.0584263,8.3109151",
+     "review": "Un chalé antiguo en la ladera sobre Brienz, con vistas al lago y a las montañas, y con el tren de vapor del Brienzer Rothorn pasando literalmente a unos metros de las ventanas. Tiene cocina de uso común, asientos al aire libre y desayuno casero con bollería recién hecha que aparece en casi todas las reseñas. El Coop, el embarcadero y la estación quedan andando. Los dos peros que se repiten: los tabiques dejan pasar el ruido y los dinteles de las puertas son bajos, cosa a tener en cuenta si se mide más de metro setenta.",
+     "hours": "Recepción de 7:00 a 20:00. Noche del 13 al 14 de agosto",
+     "price": "199 € la noche, ya reservado",
+     "tips": "La subida desde la estación es corta pero empinada, así que mejor llegar en coche con el equipaje. Al ser una casa antigua con tabiques finos, conviene bajar la voz por la noche y contar con que se oye al vecino. Es el único alojamiento del viaje con desayuno incluido de verdad, lo que ayuda el día 5, que empieza pronto.",
+     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.7560802,8.0361142",
      "verified_at": "2026-07-31"
     }
    ],
@@ -2567,79 +2711,81 @@ body.is-offline .offline-chip { display: inline-flex; }
      },
      "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.4975584,7.7140099",
      "notes": "Autoservicio con terraza sobre el agua, abierto de 11:30 a 17:00. Buena opción para un café caliente, aunque llevando el picnic lo lógico es comer en la orilla: hay sitio de sobra y la vista es la misma."
-    },
-    {
-     "name": "Wirtshaus Taube, Lucerna",
-     "meal": "cena",
-     "speciality": "Chügelipastetli de Lucerna, Rösti del Puente de la Capilla y Stunggis, el estofado de cordero de la zona",
-     "price_range": "€€",
-     "reservation_required": true,
-     "coords": {
-      "lat": 47.0507488,
-      "lng": 8.3030778
-     },
-     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=47.0507488,8.3030778",
-     "notes": "La cena de restaurante que sí merece la pena reservar en este viaje: cocina lucernesa de verdad, con casi dos mil reseñas y un 4,3 estable, precios contenidos para lo que es Suiza y terraza junto al Reuss. Conviene reservar si se quiere mesa fuera, porque en agosto se llena. El Chügelipastetli, un hojaldre relleno de carne y setas, es el plato histórico de la ciudad."
     }
    ],
    "alternative_plans": {
-    "more_time": "En el Oeschinensee, la subida al mirador del Heuberg añade una hora y cambia por completo la perspectiva del lago. En Lucerna, si se llega antes de las ocho, el paseo por la muralla del Museggmauer permite subir a tres de sus nueve torres gratis.",
-    "less_time": "El plan ya viene recortado por el lado de Rosenlaui, que pide dos o tres horas y aquí tiene hora y media. Si el día se tuerce, lo siguiente que cae es el León de Lucerna, que queda a quince minutos a pie del casco viejo y se puede dejar para otro viaje.",
-    "rainy_day": "El Oeschinensee con lluvia pierde el color turquesa, que depende de la luz directa. Si amanece cerrado, compensa invertir el día: salir más tarde, hacer Rosenlaui por la mañana, que con agua abundante gana, y dedicar la tarde entera a Lucerna, donde el Museo Suizo del Transporte es de los mejores museos del país para una adolescente.",
-    "with_kids": "El tobogán de montaña de la estación superior del Oeschinensee cuesta 6 CHF por bajada antes de la una y 7 después, y se paga en la máquina de al lado. Las barcas de remos del lago son otra baza. En Rosenlaui, los túneles y las escaleras de caracol funcionan solos."
+    "more_time": "En el Oeschinensee, la subida al mirador del Heuberg añade una hora y cambia por completo la perspectiva del lago. En Brienz, el tren de vapor del Brienzer Rothorn es una institución de 1892, aunque el trayecto completo son casi tres horas y habría que reservar y sacrificar Rosenlaui.",
+    "less_time": "Con el día ya holgado, el margen está en Rosenlaui, que se recorre en hora y media sin pararse en cada mirador. La otra válvula es acortar la estancia en la orilla del Oeschinensee.",
+    "rainy_day": "El Oeschinensee con lluvia pierde el color turquesa, que depende de la luz directa. Si amanece cerrado, compensa invertir el día: salir más tarde, hacer Rosenlaui por la mañana, que con agua abundante gana, y dedicar la tarde al Museo al Aire Libre de Ballenberg, junto a Brienz, con un centenar de casas rurales históricas trasladadas de toda Suiza.",
+    "with_kids": "El tobogán de montaña de la estación superior del Oeschinensee cuesta 6 CHF por bajada antes de la una y 7 después, y se paga en la máquina de al lado. Las barcas de remos del lago son otra baza. En Rosenlaui, los túneles y las escaleras funcionan solos."
    },
    "logistics": {
-    "driving_km": 200,
-    "driving_time_min": 300,
-    "walking_km": 9,
-    "walking_time_min": 190,
-    "public_transport": "Kandersteg tiene estación de tren a 10-15 minutos a pie del telecabina, con enlace en autobús local de junio a octubre. Rosenlaui se alcanza en autobús postal desde Meiringen, parada Rosenlaui Gletscherschlucht. Lucerna tiene transporte urbano excelente desde Horw."
+    "driving_km": 185,
+    "driving_time_min": 215,
+    "walking_km": 10,
+    "walking_time_min": 215,
+    "public_transport": "Kandersteg tiene estación de tren a 10-15 minutos a pie del telecabina, con enlace en autobús local de junio a octubre. Rosenlaui se alcanza en autobús postal desde Meiringen, parada Rosenlaui Gletscherschlucht. Brienz está en la línea del Brünig, con tren directo desde Interlaken."
    },
    "info": {
     "travel_tips": [
-     "Es el día más cargado del viaje: cinco horas de coche repartidas, dos visitas largas y una ciudad por la noche. La garganta de Rosenlaui va recortada a propósito para que quepa Lucerna con calma por la tarde.",
-     "La reserva de franja del Oeschinensee no es una recomendación sino un requisito legal entre el 20 de junio y el 20 de septiembre. Sin ella no hay transporte, aunque se tenga el billete pagado.",
+     "La reserva de franja del Oeschinensee no es una recomendación sino un requisito: entre el 20 de junio y el 20 de septiembre, sin ella no hay transporte aunque se tenga el billete pagado.",
      "El aparcamiento premium de 10 CHF solo se puede reservar con una franja de subida entre las 8:30 y las 10:00 y obliga a entrar antes de las 9:30. Encaja exactamente con el horario de este día.",
-     "Del 20 de septiembre en adelante cambia el horario del telecabina, pero en agosto cierra a las 18:00. Interesa calcular la vuelta con margen: son treinta minutos andando desde la orilla."
+     "Dormir en Brienz en lugar de seguir hasta Lucerna es lo que permite que Rosenlaui recupere sus dos horas y media. Rosenlaui queda a media hora del alojamiento, no a hora y media.",
+     "El telecabina cierra a las 18:00 en agosto, pero desde la orilla del lago hay treinta minutos de subida. Interesa calcular la vuelta con margen."
     ],
     "access": [
-     "Brienz a Kandersteg: 85 km por Interlaken, Spiez y Frutigen. Alrededor de 1 h 20 min.",
+     "Interlaken a Kandersteg: 65 km por Spiez y Frutigen. Alrededor de 1 h 10 min.",
      "Kandersteg a Rosenlaui: 115 km por Spiez, Interlaken, Brienz y Meiringen, y luego carretera estrecha de peaje valle arriba. Cerca de dos horas.",
-     "Rosenlaui a Horw: 75 km por Meiringen y el paso del Brünig. Aproximadamente 1 h 25 min.",
-     "Horw a Lucerna: 8 km, unos 15 minutos en coche."
+     "Rosenlaui a Brienz: 25 km por Meiringen. Unos 35 minutos."
     ],
     "facts": [
      "El Oeschinensee se formó cuando un desprendimiento cerró el valle tras la retirada del glaciar. No tiene desagüe superficial: el agua se filtra por la roca y reaparece kilómetros más abajo.",
      "La garganta de Rosenlaui se abrió al público hace más de cien años, en plena fiebre del turismo alpino, con pasarelas y túneles excavados a mano.",
-     "Lucerna se sumó a la Confederación en 1332 y fue la primera ciudad en hacerlo: hasta entonces la alianza era cosa de valles campesinos."
+     "Brienz vive de la talla en madera desde el siglo XIX: aquí se fabricaban los recuerdos que compraban los viajeros románticos del Grand Tour."
     ]
    }
   },
   {
    "day": 5,
    "date": "2026-08-14",
-   "title": "Bürgenstock, Hammetschwand y traslado a Ginebra",
+   "title": "Bürgenstock, Hammetschwand y Lucerna",
    "hero_image": "",
    "timeline": [
     {
-     "time": "07:45",
-     "icon": "🚗",
-     "title": "Salida de Horw con el equipaje",
-     "description": "Quince minutos hasta Lucerna y aparcamiento subterráneo bajo la estación, el mismo de anoche. Hoy se cruza medio país, así que todo cargado desde el principio.",
+     "time": "08:15",
+     "icon": "🥐",
+     "title": "Desayuno y salida de Brienz",
+     "description": "El único alojamiento del viaje con desayuno casero incluido, así que hoy se sale con el estómago lleno. Equipaje cargado: la noche es en Horw.",
      "type": "checkout",
-     "duration_min": 35
+     "duration_min": 45
     },
     {
-     "time": "09:07",
+     "time": "09:00",
+     "icon": "🛣️",
+     "title": "Brienz → Lucerna",
+     "description": "Cincuenta y cinco kilómetros por el paso del Brünig, con Lungern y el lago de Sarnen de camino. Carretera de montaña ancha y una de las más bonitas del viaje.",
+     "type": "transport",
+     "duration_min": 65
+    },
+    {
+     "time": "10:10",
+     "icon": "🅿️",
+     "title": "Aparcamiento bajo la estación de Lucerna",
+     "description": "El Bahnhofparking P1+P2 está debajo de la estación y a un paso del muelle 3. Abierto las 24 horas, unos 16 CHF por cuatro horas.",
+     "type": "transport",
+     "duration_min": 20
+    },
+    {
+     "time": "11:07",
      "icon": "⛴️",
      "title": "Barco a Kehrsiten-Bürgenstock",
-     "description": "El catamarán MS Bürgenstock sale del muelle 3, frente al KKL y a un paso de la estación, cada hora en punto y siete minutos. Treinta minutos cruzando el lago con Lucerna, el Rigi y el Pilatus alrededor.",
+     "description": "El catamarán MS Bürgenstock sale del muelle 3, frente al KKL, cada hora en punto y siete minutos. Media hora cruzando el lago con Lucerna, el Rigi y el Pilatus alrededor.",
      "type": "transport",
      "place_id": "luzern-bahnhofquai",
      "duration_min": 30
     },
     {
-     "time": "09:40",
+     "time": "11:40",
      "icon": "🚞",
      "title": "Funicular de 1888",
      "description": "Al bajar del barco se entra directamente en el funicular rojo, el primero eléctrico de Suiza. Seis minutos y 440 metros de desnivel con el lago abriéndose por debajo.",
@@ -2648,62 +2794,89 @@ body.is-offline .offline-chip { display: inline-flex; }
      "duration_min": 15
     },
     {
-     "time": "10:00",
+     "time": "12:00",
      "icon": "🥾",
      "title": "Felsenweg, el camino del acantilado",
-     "description": "Sendero llano y seguro tallado en la pared entre 1900 y 1905, que sale del resort pasando junto a la Taverne 1879. Treinta y cinco minutos de caminata con el lago quinientos metros más abajo.",
+     "description": "Sendero llano y seguro tallado en la pared entre 1900 y 1905, que sale del resort pasando junto a la Taverne 1879. Caminata con el lago quinientos metros más abajo.",
      "type": "activity",
      "place_id": "burgenstock-resort",
      "duration_min": 40
     },
     {
-     "time": "10:40",
+     "time": "12:45",
      "icon": "🛗",
      "title": "Ascensor de Hammetschwand",
-     "description": "Ciento cincuenta y tres metros de subida en menos de un minuto por un ascensor exterior de acero de 1905, el más alto de Europa. Arriba, mirador con panorámica completa del lago de los Cuatro Cantones y un restaurante sencillo.",
+     "description": "Ciento cincuenta y tres metros de subida en menos de un minuto por un ascensor exterior de acero de 1905, el más alto de Europa. Arriba, mirador con panorámica completa del lago de los Cuatro Cantones y sitio de sobra para el picnic.",
      "type": "activity",
      "place_id": "hammetschwand",
-     "duration_min": 55
-    },
-    {
-     "time": "11:40",
-     "icon": "🥾",
-     "title": "Vuelta por el Känzeli",
-     "description": "El camino de regreso pasa por el mirador del Känzeli. El circuito completo del acantilado son 5 km, pero deshacer el Felsenweg es más rápido y no se pierde nada.",
-     "type": "activity",
-     "duration_min": 45
-    },
-    {
-     "time": "12:30",
-     "icon": "🚞",
-     "title": "Funicular y barco de vuelta",
-     "description": "El barco de regreso sale de Kehrsiten alrededor de los 37 minutos de cada hora. Conviene mirar el horario del último antes de empezar a caminar, aunque en agosto hay servicio hasta bien entrada la noche.",
-     "type": "transport",
-     "duration_min": 45
-    },
-    {
-     "time": "13:20",
-     "icon": "🧺",
-     "title": "Comida junto al lago en Lucerna",
-     "description": "Los bancos del paseo del Bahnhofquai y del Inseli, junto al embarcadero, son buen sitio para acabar con el picnic antes de meterse tres horas en la autopista.",
-     "type": "meal",
-     "duration_min": 40
+     "duration_min": 75
     },
     {
      "time": "14:05",
-     "icon": "🛣️",
-     "title": "Lucerna → Ginebra",
-     "description": "Doscientos cincuenta kilómetros de autopista por Berna, Friburgo y Lausana, con el Lemán apareciendo en el último tramo. Alrededor de tres horas más una parada. Es el único trayecto largo y aburrido del viaje.",
+     "icon": "🥾",
+     "title": "Vuelta por el mirador del Känzeli",
+     "description": "El camino de regreso pasa por el Känzeli. El circuito completo del acantilado son 5 km, pero deshacer el Felsenweg es más rápido y no se pierde nada.",
      "type": "transport",
-     "duration_min": 200
+     "duration_min": 45
     },
     {
-     "time": "17:30",
+     "time": "15:07",
+     "icon": "⛴️",
+     "title": "Funicular y barco de vuelta a Lucerna",
+     "description": "El barco de regreso sale de Kehrsiten alrededor de los 37 minutos de cada hora. Conviene mirar el reloj antes de alargar el paseo, porque perder uno significa esperar sesenta minutos.",
+     "type": "transport",
+     "duration_min": 45
+    },
+    {
+     "time": "16:00",
+     "icon": "🌉",
+     "title": "Puente de la Capilla y casco viejo",
+     "description": "El puente de madera cubierto más antiguo de Europa, la torre octogonal del Wasserturm y las plazas con fachadas pintadas del casco viejo. Ahora sí con toda la tarde por delante, que es lo que la ciudad pide.",
+     "type": "visit",
+     "place_id": "kapellbrucke",
+     "duration_min": 105
+    },
+    {
+     "time": "17:50",
+     "icon": "🦁",
+     "title": "El León de Lucerna",
+     "description": "Quince minutos andando cuesta arriba desde el casco viejo. Un león agonizante de diez metros tallado en el acantilado en 1821 en memoria de los guardias suizos muertos en 1792. Mark Twain lo llamó el trozo de piedra más triste del mundo.",
+     "type": "visit",
+     "place_id": "lowendenkmal",
+     "duration_min": 40
+    },
+    {
+     "time": "18:40",
+     "icon": "🏰",
+     "title": "Muralla del Museggmauer",
+     "description": "Nueve torres del siglo XIV sobre la ciudad, con tres de ellas abiertas y gratuitas hasta las siete de la tarde. Es el mirador del casco viejo y casi nadie sube.",
+     "type": "visit",
+     "duration_min": 50
+    },
+    {
+     "time": "19:40",
+     "icon": "🍽️",
+     "title": "Cena en el casco viejo",
+     "description": "La única cena de restaurante planificada del viaje, y toca en la ciudad donde tiene más sentido: cocina lucernesa a orillas del Reuss.",
+     "type": "meal",
+     "duration_min": 90
+    },
+    {
+     "time": "21:20",
+     "icon": "🚗",
+     "title": "Lucerna → Horw",
+     "description": "Ocho kilómetros por la orilla del lago. El aparcamiento de la estación está abierto las 24 horas y la entrada al alojamiento es automática por aplicación.",
+     "type": "transport",
+     "duration_min": 20
+    },
+    {
+     "time": "21:45",
      "icon": "🛏️",
-     "title": "Holiday Inn Express Geneva Airport",
-     "description": "A un par de kilómetros de la terminal, con lanzadera al aeropuerto. Merece la pena preguntar en recepción por la tarjeta de transporte gratuita de Ginebra, que sirve para el día siguiente.",
+     "title": "Anstatthotel Horw",
+     "description": "Entrada por aplicación, sin recepción. Conviene tener el código descargado de antemano, porque a esta hora no hay nadie a quien preguntar.",
      "type": "checkin",
-     "duration_min": 60
+     "place_id": "alojamiento-anstatthotel-horw",
+     "duration_min": 20
     }
    ],
    "places": [
@@ -2763,6 +2936,48 @@ body.is-offline .offline-chip { display: inline-flex; }
      "tips": "El billete se compra en la propia base del ascensor, al final del Felsenweg. Cierra por lluvia, viento fuerte o hielo, y en ese caso el sendero sigue mereciendo la pena por sí solo. Varias reseñas avisan de que el restaurante de arriba es muy básico: mejor no contar con él para comer. La subida es rápida, así que lo que ocupa tiempo es el mirador, no el ascensor.",
      "gmaps_url": "https://www.google.com/maps/search/?api=1&query=47.0010006,8.3962969",
      "verified_at": "2026-07-31"
+    },
+    {
+     "id": "kapellbrucke",
+     "name": "Puente de la Capilla y casco viejo de Lucerna",
+     "coords": {
+      "lat": 47.0516489,
+      "lng": 8.3075351
+     },
+     "review": "El puente de madera cubierto más antiguo de Europa, levantado hacia 1365 como parte de las fortificaciones de la ciudad y con una serie de tablas pintadas del siglo XVII bajo el tejado, buena parte de ellas perdidas en el incendio de 1993 y sustituidas después. A su lado, la torre octogonal del Wasserturm. Alrededor, un casco viejo compacto de plazas con fachadas pintadas, la muralla del Museggmauer con nueve torres y las dos agujas de la Hofkirche al otro lado del río. A esta hora, con los autocares de excursión ya de vuelta, se pasea con calma.",
+     "hours": "Acceso libre las 24 horas. Iluminado de noche",
+     "price": "Gratuito",
+     "tips": "El aparcamiento subterráneo Bahnhofparking P1+P2, bajo la estación y frente al embarcadero, está abierto las 24 horas y ronda los 16 CHF por cuatro horas. Es el mismo del día siguiente, así que sirve de reconocimiento. Las tiendas de recuerdos de los alrededores del puente son de las más caras de Suiza. Los relojes de cuco, por cierto, no son suizos sino de la Selva Negra alemana.",
+     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=47.0516489,8.3075351",
+     "verified_at": "2026-07-31"
+    },
+    {
+     "id": "lowendenkmal",
+     "name": "León de Lucerna",
+     "coords": {
+      "lat": 47.0584263,
+      "lng": 8.3109151
+     },
+     "review": "Un león moribundo de diez metros tallado directamente en un acantilado de arenisca entre 1820 y 1821, con una lanza rota clavada en el costado y una pata protegiendo el escudo de la flor de lis. Conmemora a los guardias suizos que murieron defendiendo las Tullerías en 1792. El diseño es del danés Bertel Thorvaldsen y la talla, de Lukas Ahorn. La escala real sorprende: en las fotos no se aprecia lo enorme que es. El estanque a sus pies y el parquecillo alrededor invitan a sentarse un rato.",
+     "hours": "Acceso libre las 24 horas",
+     "price": "Gratuito",
+     "tips": "Está a unos quince minutos andando del puente de la Capilla, cuesta arriba. De noche está iluminado y a esa hora hay mucha menos gente que durante el día, cuando llegan los grupos organizados. Hay aseos públicos en el recinto.",
+     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=47.0584263,8.3109151",
+     "verified_at": "2026-07-31"
+    },
+    {
+     "id": "alojamiento-anstatthotel-horw",
+     "name": "Anstatthotel Horw",
+     "coords": {
+      "lat": 47.0125507,
+      "lng": 8.3086047
+     },
+     "review": "Apartamentos con entrada automática por aplicación y sin recepción física, en Horw, a ocho kilómetros del centro de Lucerna. Las habitaciones llevan cocina pequeña pero completa y buenas persianas opacas. Es funcional más que acogedor, y las reseñas lo reflejan: puntúan alto la comodidad del check-in por aplicación y la limpieza, y bajo el aislamiento acústico y una mampara de cristal del baño que deja bastante que desear en intimidad.",
+     "hours": "Entrada automática por aplicación las 24 horas. Atención al cliente de 8:00 a 20:00 entre semana. Noche del 14 al 15 de agosto",
+     "price": "170 € la noche, ya reservado",
+     "tips": "Como no hay recepción, es imprescindible descargar la aplicación y tener el código de acceso antes de llegar, sobre todo porque el día 5 se llega de noche después de cenar en Lucerna. Conviene comprobar si dan tarjeta de huésped de Lucerna, que en muchos alojamientos de la zona incluye el transporte urbano y ahorraría el aparcamiento del centro.",
+     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=47.0125507,8.3086047",
+     "verified_at": "2026-07-31"
     }
    ],
    "restaurants": [
@@ -2778,36 +2993,49 @@ body.is-offline .offline-chip { display: inline-flex; }
      },
      "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.9967476,8.3791807",
      "notes": "Queda justo en el punto de salida del sendero y es cómoda, pero los precios son los de un complejo de cinco estrellas. Con el picnic a cuestas, los bancos del Felsenweg y del mirador del Känzeli tienen mejor vista y salen gratis."
+    },
+    {
+     "name": "Wirtshaus Taube, Lucerna",
+     "meal": "cena",
+     "speciality": "Chügelipastetli de Lucerna, Rösti del Puente de la Capilla y Stunggis, el estofado de cordero de la zona",
+     "price_range": "€€",
+     "reservation_required": true,
+     "coords": {
+      "lat": 47.0507488,
+      "lng": 8.3030778
+     },
+     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=47.0507488,8.3030778",
+     "notes": "La cena de restaurante que sí merece la pena reservar en este viaje: cocina lucernesa de verdad, con casi dos mil reseñas y un 4,3 estable, precios contenidos para lo que es Suiza y terraza junto al Reuss. Conviene reservar si se quiere mesa fuera, porque en agosto se llena. El Chügelipastetli, un hojaldre relleno de carne y setas, es el plato histórico de la ciudad."
     }
    ],
    "alternative_plans": {
-    "more_time": "El circuito completo del acantilado son 5 km e incluye el mirador del Känzeli y un tramo por el bosque, unas dos horas en total. Otra opción es coger el barco de vuelta una hora más tarde y dedicar ese rato al paseo del lago en Lucerna.",
-    "less_time": "Si el traslado a Ginebra preocupa, se puede subir al Bürgenstock en coche por Stansstad, aparcar en el resort y hacer solo el Felsenweg y el ascensor. Ahorra hora y media, pero se pierde la travesía del lago, que es de lo mejor del día.",
-    "rainy_day": "El ascensor de Hammetschwand cierra con lluvia o viento y el Felsenweg pierde la gracia. El plan de sustitución en Lucerna es el Museo Suizo del Transporte, el museo más visitado del país y muy apañado para una adolescente, o la Colección Rosengart si tira más la pintura.",
-    "with_kids": "El ascensor acristalado subiendo por fuera del acantilado es la atracción del día por derecho propio. El sendero del acantilado, con su barandilla al borde del vacío, tampoco se queda corto."
+    "more_time": "El circuito completo del acantilado son 5 km e incluye el mirador del Känzeli y un tramo por el bosque, unas dos horas en total. En Lucerna, la Colección Rosengart reúne obras de Picasso y Klee y abre hasta las seis.",
+    "less_time": "Si el barco de las 11:07 se escapa, el siguiente sale a las 12:07 y todo el día se desplaza una hora, lo que recorta el casco viejo pero no lo elimina. La otra opción es subir al Bürgenstock en coche por Stansstad, que ahorra hora y media pero renuncia a la travesía del lago.",
+    "rainy_day": "El ascensor de Hammetschwand cierra con lluvia o viento fuerte y el Felsenweg pierde la gracia. El plan de sustitución es el Museo Suizo del Transporte, el más visitado del país y muy apañado para una adolescente, y dedicar el resto del día al casco viejo, que con los soportales y los museos aguanta bien el agua.",
+    "with_kids": "El ascensor acristalado subiendo por fuera del acantilado es la atracción del día por derecho propio. El sendero del acantilado, con la barandilla al borde del vacío, tampoco se queda corto, y subir a las torres del Museggmauer es gratis."
    },
    "logistics": {
-    "driving_km": 275,
-    "driving_time_min": 235,
-    "walking_km": 6,
-    "walking_time_min": 130,
-    "public_transport": "El barco desde Lucerna es la mejor forma de llegar y sale cada hora. Desde Horw no hay enlace directo útil con Kehrsiten, así que compensa acercarse a Lucerna en coche y aparcar junto al embarcadero. También hay autobús al Bürgenstock desde Stansstad, unos 8 CHF ida y vuelta."
+    "driving_km": 70,
+    "driving_time_min": 90,
+    "walking_km": 9,
+    "walking_time_min": 190,
+    "public_transport": "El barco desde Lucerna es la mejor forma de llegar al Bürgenstock y sale cada hora. Desde Horw no hay enlace directo útil con Kehrsiten, así que compensa acercarse a Lucerna en coche y aparcar junto al embarcadero. También hay autobús al Bürgenstock desde Stansstad, unos 8 CHF ida y vuelta."
    },
    "info": {
     "travel_tips": [
-     "El barco sale a los siete minutos de cada hora desde Lucerna y vuelve de Kehrsiten alrededor de los treinta y siete. Perder uno significa esperar una hora entera, así que interesa mirar el reloj antes de alargar el paseo.",
-     "El ascensor abre a las 9:30. Cogiendo el barco de las 9:07 se llega a su base sobre las 10:40, con el horario ya en marcha y antes de que suba el grueso de visitantes.",
-     "Tres horas de autopista después de una mañana de caminata cansan más de lo que parece. Conviene parar una vez en un área de servicio, aunque sea solo para estirar las piernas.",
-     "En el hotel del aeropuerto merece la pena pedir en recepción la tarjeta de transporte de Ginebra, que los alojamientos de la ciudad suelen entregar gratis a sus huéspedes y que resuelve el desplazamiento del día siguiente sin aparcar en el centro."
+     "El barco sale a los siete minutos de cada hora desde Lucerna y vuelve de Kehrsiten alrededor de los treinta y siete. Perder uno significa esperar una hora entera.",
+     "Dormir en Horw en lugar de tener que llegar a Ginebra esta noche es lo que convierte Lucerna en una tarde completa en vez de una visita a la carrera. Las tres horas de autopista se pasan al día siguiente, y allí van repartidas.",
+     "Las tres torres visitables del Museggmauer cierran a las siete de la tarde. Si el día se retrasa, es lo primero que se pierde.",
+     "Como el alojamiento no tiene recepción, la aplicación y el código de acceso hay que tenerlos descargados antes de salir por la mañana."
     ],
     "access": [
-     "Horw a Lucerna: 8 km, unos 15 minutos. Aparcamiento Bahnhofparking P1+P2 bajo la estación, junto al muelle 3.",
-     "Lucerna a Kehrsiten-Bürgenstock: 30 minutos en barco. El funicular enlaza directamente al desembarcar.",
-     "Lucerna a Ginebra: 250 km de autopista por Berna y Lausana. Unas tres horas sin paradas."
+     "Brienz a Lucerna: 55 km por el paso del Brünig. Alrededor de 1 h 05 min.",
+     "Lucerna a Kehrsiten-Bürgenstock: 30 minutos en barco desde el muelle 3. El funicular enlaza al desembarcar.",
+     "Lucerna a Horw: 8 km por la orilla del lago, unos 15 minutos."
     ],
     "facts": [
      "El funicular del Bürgenstock, de 1888, fue el primero eléctrico de Suiza. El ascensor de Hammetschwand, de 1905, funcionó al principio con presión hidráulica.",
-     "El Felsenweg se excavó en la roca a principios del siglo XX como reclamo turístico para los clientes del hotel, en plena época dorada del turismo alpino.",
+     "Lucerna se sumó a la Confederación en 1332 y fue la primera ciudad en hacerlo: hasta entonces la alianza era cosa de valles campesinos.",
      "El lago de los Cuatro Cantones debe su nombre a Uri, Schwyz, Unterwalden y Lucerna, los cuatro primeros miembros de la Confederación."
     ]
    }
@@ -2815,80 +3043,329 @@ body.is-offline .offline-chip { display: inline-flex; }
   {
    "day": 6,
    "date": "2026-08-15",
-   "title": "Casco viejo de Ginebra y vuelta",
+   "title": "Berna y bajada a Ginebra",
+   "hero_image": "",
+   "timeline": [
+    {
+     "time": "08:30",
+     "icon": "🚗",
+     "title": "Salida de Horw hacia Berna",
+     "description": "Cien kilómetros de autopista por Sursee y el valle del Emmental. Es el traslado corto del día: el largo viene después de comer.",
+     "type": "checkout",
+     "duration_min": 75
+    },
+    {
+     "time": "09:50",
+     "icon": "🅿️",
+     "title": "Aparcar en Berna",
+     "description": "El casco viejo es zona peatonal casi entera. Los aparcamientos subterráneos del Bahnhof y del Casino dejan a cinco minutos andando del Zytglogge y rondan los 3 CHF por hora.",
+     "type": "transport",
+     "duration_min": 20
+    },
+    {
+     "time": "10:15",
+     "icon": "🕰️",
+     "title": "Zytglogge y los soportales",
+     "description": "Conviene llegar unos minutos antes de las once para ver arrancar el carrusel de figuras del reloj astronómico. Después, el casco viejo entero: seis kilómetros de soportales cubiertos y las fuentes renacentistas policromadas de la Kramgasse.",
+     "type": "visit",
+     "place_id": "zytglogge",
+     "duration_min": 75
+    },
+    {
+     "time": "11:30",
+     "icon": "⛪",
+     "title": "Catedral de Berna y Münsterplattform",
+     "description": "La catedral más alta de Suiza, con el Juicio Final policromado del pórtico intacto desde antes de la Reforma. Al lado, la terraza ajardinada sobre el meandro del Aare, con vistas a los Alpes berneses.",
+     "type": "visit",
+     "place_id": "berner-munster",
+     "duration_min": 60
+    },
+    {
+     "time": "12:30",
+     "icon": "🧺",
+     "title": "Picnic en la Münsterplattform",
+     "description": "Bancos a la sombra de castaños con el río cincuenta metros más abajo. Uno de los mejores comedores gratuitos del viaje, y en pleno centro de la ciudad.",
+     "type": "meal",
+     "duration_min": 45
+    },
+    {
+     "time": "13:20",
+     "icon": "🐻",
+     "title": "Foso de los Osos y el Aare",
+     "description": "Al final del casco viejo, cruzando el puente de Nydegg. Los osos suelen estar en la parte baja junto al río, así que hay que bajar para verlos; hay un ascensor público que salva la cuesta.",
+     "type": "visit",
+     "place_id": "barengraben",
+     "duration_min": 45
+    },
+    {
+     "time": "14:10",
+     "icon": "🌹",
+     "title": "Rosengarten",
+     "description": "Diez minutos de cuesta desde el Foso de los Osos hasta el mirador clásico de la ciudad: el casco viejo entero curvado sobre el meandro del Aare, con la aguja de la catedral asomando entre los tejados rojos. En agosto los rosales están en flor.",
+     "type": "visit",
+     "place_id": "rosengarten-bern",
+     "duration_min": 45
+    },
+    {
+     "time": "15:10",
+     "icon": "🚗",
+     "title": "Vuelta al coche",
+     "description": "Bajada al aparcamiento por la ribera del Aare o en autobús urbano si las piernas ya han tenido bastante.",
+     "type": "transport",
+     "duration_min": 25
+    },
+    {
+     "time": "15:40",
+     "icon": "🛣️",
+     "title": "Berna → Ginebra",
+     "description": "Ciento sesenta kilómetros de autopista por Friburgo y Lausana, con el Lemán apareciendo en el último tramo. Es un trayecto cómodo y bien señalizado, con áreas de servicio de sobra.",
+     "type": "transport",
+     "duration_min": 115
+    },
+    {
+     "time": "17:40",
+     "icon": "🛏️",
+     "title": "ibis budget Genève Palexpo",
+     "description": "Junto al recinto ferial, a diez minutos a pie de la terminal. En recepción entregan gratis la tarjeta de transporte de Ginebra: conviene pedirla ahora y no mañana con prisa, porque es la que resuelve el último día.",
+     "type": "checkin",
+     "place_id": "alojamiento-ibis-palexpo",
+     "duration_min": 50
+    },
+    {
+     "time": "18:40",
+     "icon": "🚆",
+     "title": "Bajada al centro de Ginebra",
+     "description": "Tranvía o autobús desde Palexpo hasta el centro, unos veinte minutos y gratis con la tarjeta del hotel. Dejando el coche en el hotel se evita el aparcamiento del casco viejo, que es caro y escaso.",
+     "type": "transport",
+     "duration_min": 30
+    },
+    {
+     "time": "19:15",
+     "icon": "⛲",
+     "title": "El lago y el Jet d'Eau al atardecer",
+     "description": "Paseo por el Quai du Mont-Blanc y el Jardin Anglais, con el reloj de flores, hasta la base del chorro. En agosto funciona hasta las 23:15 e iluminado por la noche. La mejor hora del día para verlo y para fotografiarlo.",
+     "type": "visit",
+     "place_id": "jet-deau",
+     "duration_min": 75
+    },
+    {
+     "time": "20:40",
+     "icon": "🍽️",
+     "title": "Cena en la ciudad baja",
+     "description": "Las calles entre el lago y el casco viejo concentran la oferta más razonable de precio. Ginebra es de las ciudades más caras de Europa, así que el menú del día y las panaderías de barrio compensan bastante.",
+     "type": "meal",
+     "duration_min": 80
+    },
+    {
+     "time": "22:20",
+     "icon": "🚆",
+     "title": "Vuelta al hotel",
+     "description": "El transporte urbano funciona hasta tarde. Con la tarjeta del hotel el trayecto sigue saliendo gratis.",
+     "type": "transport",
+     "duration_min": 30
+    }
+   ],
+   "places": [
+    {
+     "id": "zytglogge",
+     "name": "Zytglogge y los soportales de Berna",
+     "coords": {
+      "lat": 46.9480298,
+      "lng": 7.4477977
+     },
+     "review": "La torre del reloj astronómico, levantada en el siglo XIII como puerta de la ciudad y transformada en el XV en el artilugio que sigue funcionando hoy. Unos minutos antes de cada hora se pone en marcha el carrusel de figuras: el gallo que canta, el desfile de osos, el bufón y el caballero. Alrededor arranca el casco viejo, con seis kilómetros de soportales cubiertos, los más largos de Europa, y una sucesión de fuentes renacentistas policromadas en mitad de la calle. Todo el conjunto es Patrimonio de la Humanidad desde 1983.",
+     "hours": "Acceso libre a la calle. El carrusel de figuras se activa unos cuatro minutos antes de cada hora en punto",
+     "price": "Gratuito ver el reloj desde la calle. La visita guiada al mecanismo se paga aparte",
+     "tips": "Conviene llegar cinco minutos antes de la hora en punto para no perderse el mecanismo, que dura poco y arranca antes de la campanada. Los soportales permiten recorrer casi todo el casco viejo a cubierto, lo que resuelve el día si llueve. Las fuentes de la Kramgasse y la Marktgasse, incluida la inquietante del Kindlifresser, quedan de camino.",
+     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.9480298,7.4477977",
+     "verified_at": "2026-07-31"
+    },
+    {
+     "id": "berner-munster",
+     "name": "Catedral de Berna",
+     "coords": {
+      "lat": 46.9472395,
+      "lng": 7.451531
+     },
+     "review": "La catedral más alta de Suiza, con una aguja de cien metros terminada en 1893 sobre un edificio gótico tardío empezado en 1421. El tímpano de la portada conserva un Juicio Final con más de doscientas figuras policromadas que sobrevivió intacto a la Reforma, algo excepcional. Dentro, la vidriera de la danza de la muerte y unos órganos notables. Al lado hay una plataforma ajardinada sobre el meandro del Aare con vistas abiertas a los Alpes berneses. La entrada a la nave es gratuita.",
+     "hours": "Varía según el día y el culto. La plataforma exterior es de acceso libre",
+     "price": "Nave gratuita. La subida a la torre se paga aparte",
+     "tips": "Los 344 escalones de la torre dan la mejor panorámica de la ciudad, pero con el traslado a Ginebra por delante quizá no compense el rato. La terraza de al lado, la Münsterplattform, tiene el mismo tipo de vista sin subir nada y con bancos a la sombra, y es buen sitio para el picnic del mediodía.",
+     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.9472395,7.451531",
+     "verified_at": "2026-07-31"
+    },
+    {
+     "id": "barengraben",
+     "name": "Foso de los Osos y el meandro del Aare",
+     "coords": {
+      "lat": 46.9481216,
+      "lng": 7.4594521
+     },
+     "review": "Los osos son el emblema de la ciudad desde el siglo XVI y desde 2009 viven en un recinto abierto de seis mil metros cuadrados que baja hasta la orilla del Aare, con árboles, cuevas y una zona de agua donde nadan. Es gratuito y está justo al cruzar el puente de Nydegg, al final del casco viejo. Varias reseñas advierten de lo mismo: los osos suelen estar en la parte baja junto al río, no en el recinto de arriba junto al restaurante, así que hay que bajar para verlos.",
+     "hours": "Acceso libre las 24 horas. Los osos hibernan en invierno, en agosto están activos",
+     "price": "Gratuito",
+     "tips": "Para verlos de verdad hay que bajar hacia el río, no quedarse en el mirador de arriba. Hay un ascensor público que salva la cuesta y va despacio, lo que da tiempo a mirar. El paseo por la ribera del Aare a la vuelta es de lo más agradable de la ciudad, y en verano los berneses se lanzan al río corriente abajo y salen más adelante, un espectáculo en sí mismo.",
+     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.9481216,7.4594521",
+     "verified_at": "2026-07-31"
+    },
+    {
+     "id": "rosengarten-bern",
+     "name": "Rosengarten",
+     "coords": {
+      "lat": 46.9514886,
+      "lng": 7.4600729
+     },
+     "review": "El mirador clásico de Berna: un jardín en alto sobre la curva del Aare desde el que se ve el casco viejo entero, con la aguja de la catedral sobresaliendo entre los tejados de teja roja. Tiene rosaledas, un estanque, césped donde tumbarse y un restaurante acristalado. En agosto los rosales están en flor. La entrada es libre y hay aseos gratuitos.",
+     "hours": "Acceso libre las 24 horas",
+     "price": "Gratuito",
+     "tips": "Se sube andando desde el Foso de los Osos por una cuesta corta pero seria, unos diez minutos, o en autobús urbano si no apetece. Es el encuadre de postal de la ciudad y con la cámara merece la pena: a media tarde el sol ilumina de frente el casco viejo. Con el picnic encima, el césped de aquí es mejor comedor que cualquier terraza del centro.",
+     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.9514886,7.4600729",
+     "verified_at": "2026-07-31"
+    },
+    {
+     "id": "jet-deau",
+     "name": "Jet d'Eau",
+     "coords": {
+      "lat": 46.2073889,
+      "lng": 6.1559028
+     },
+     "review": "El símbolo de Ginebra: quinientos litros de agua por segundo disparados a ciento cuarenta metros de altura desde un espigón del lago. Nació por accidente en 1886 como válvula de escape de la presión de la red hidráulica de la ciudad y acabó convertido en atracción. Se puede llegar caminando hasta la base por el espigón, donde el rocío empapa a quien pase con viento a favor. El paseo del lago que lleva hasta allí, con el Jardin Anglais y el reloj de flores, es agradable y llano.",
+     "hours": "Del 4 de mayo al 13 de septiembre, de 9:00 a 23:15, iluminado por la noche. Se apaga con viento fuerte o helada",
+     "price": "Gratuito",
+     "tips": "Conviene mirar la dirección del viento antes de caminar por el espigón: con viento cruzado se sale calado, lo cual con un vuelo por delante no es lo ideal. Para la foto sin mojarse, el mejor punto es el Quai Gustave-Ador o el Pont du Mont-Blanc. El reloj de flores del Jardin Anglais queda de camino.",
+     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.2073889,6.1559028",
+     "verified_at": "2026-07-31"
+    },
+    {
+     "id": "alojamiento-ibis-palexpo",
+     "name": "ibis budget Genève Palexpo Aéroport",
+     "coords": {
+      "lat": 46.234191,
+      "lng": 6.1173335
+     },
+     "review": "Hotel sencillo y limpio junto al recinto ferial de Palexpo, a unos diez minutos a pie de la terminal y con lanzadera gratuita. Las habitaciones son pequeñas y funcionales, con una cama supletoria alta muy práctica para el tercer viajero. El punto que más se repite en las reseñas es la amabilidad del personal de recepción. Tiene bar y restaurante en la planta baja, útil el día 6 al llegar de carretera.",
+     "hours": "Recepción 24 horas. Noche del 15 al 16 de agosto",
+     "price": "124 € la noche, ya reservado",
+     "tips": "En recepción entregan gratis la tarjeta de transporte público de Ginebra, que cubre autobús, tranvía y tren urbano. Es la pieza que hace que la mañana del día 7 salga redonda: se baja al centro sin coche y sin pagar aparcamiento. Conviene pedirla al hacer el registro y no la mañana siguiente con prisa.",
+     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.234191,6.1173335",
+     "verified_at": "2026-07-31"
+    }
+   ],
+   "restaurants": [
+    {
+     "name": "Restaurante del Rosengarten, Berna",
+     "meal": "almuerzo",
+     "speciality": "Comedor acristalado con la mejor vista del casco viejo de Berna",
+     "price_range": "€€€",
+     "reservation_required": true,
+     "coords": {
+      "lat": 46.9514886,
+      "lng": 7.4600729
+     },
+     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.9514886,7.4600729",
+     "notes": "Varias reseñas destacan el menú del mediodía, que cambia a diario y sale bastante más a cuenta que la carta. Aun así, llevando la comida encima, el césped del propio jardín tiene la misma vista y sale gratis."
+    }
+   ],
+   "alternative_plans": {
+    "more_time": "Si Berna se despacha pronto, Gruyères queda a media hora de desvío entre Friburgo y Lausana: pueblo medieval amurallado, castillo y la quesería donde se hace el queso del mismo nombre. También está Morat, con la muralla entera transitable a la orilla de su lago.",
+    "less_time": "Lo primero que cae es el Rosengarten, aunque sea la mejor vista, porque implica una cuesta y media hora. Con el casco viejo, la catedral y los osos ya se tiene lo esencial de Berna en tres horas.",
+    "rainy_day": "Berna es una ciudad diseñada para la lluvia: seis kilómetros de soportales cubiertos permiten recorrer el casco viejo entero sin mojarse. Si aprieta, el Zentrum Paul Klee, obra de Renzo Piano, reúne la mayor colección del pintor del mundo, y la Casa de Einstein en la Kramgasse es la vivienda donde formuló la relatividad especial en 1905.",
+    "with_kids": "Los osos y el carrusel de figuras del reloj funcionan solos. En verano, ver a los berneses tirarse al Aare y dejarse arrastrar por la corriente es un espectáculo difícil de olvidar, y desde el puente de Nydegg se ve de primera fila."
+   },
+   "logistics": {
+    "driving_km": 265,
+    "driving_time_min": 215,
+    "walking_km": 7,
+    "walking_time_min": 150,
+    "public_transport": "Berna y Ginebra están unidas por tren directo cada media hora, en menos de dos horas. Dentro de Berna, el casco viejo se recorre entero a pie y hay tranvía y autobús para las cuestas. En Ginebra, la tarjeta de transporte que da el hotel cubre autobús, tranvía y tren urbano."
+   },
+   "info": {
+    "travel_tips": [
+     "AVISO: las Cataratas del Rin, que aparecen en algunas planificaciones de esta ruta, están en Schaffhausen, al noreste de Zúrich y en dirección contraria. Meterlas entre Lucerna y Ginebra convertiría este día en cinco horas y media de coche. Berna, en cambio, queda exactamente de camino.",
+     "El carrusel de figuras del Zytglogge arranca unos cuatro minutos antes de la hora en punto y dura poco. Conviene estar delante a menos veinte para no quedarse mirando una torre quieta.",
+     "El casco viejo de Berna es zona peatonal casi entera. Lo eficaz es dejar el coche en un aparcamiento subterráneo del centro y no intentar acercarse más.",
+     "Al llegar al hotel de Ginebra, la tarjeta de transporte gratuita se pide en el registro. Es lo que permite bajar al centro esta tarde y mañana por la mañana sin coche ni aparcamiento."
+    ],
+    "access": [
+     "Horw a Berna: 100 km de autopista por Sursee. Alrededor de 1 h 15 min.",
+     "Berna a Ginebra: 160 km de autopista por Friburgo y Lausana. Cerca de 1 h 55 min.",
+     "Palexpo al centro de Ginebra: unos 20 minutos en tranvía o autobús, incluidos en la tarjeta del hotel."
+    ],
+    "facts": [
+     "Berna se fundó en 1191 y, según la leyenda, tomó su nombre del primer animal que cazó su fundador: un oso. De ahí el escudo y el foso.",
+     "El casco viejo es Patrimonio de la Humanidad desde 1983 y conserva la traza medieval intacta, con los soportales cubiertos más largos de Europa.",
+     "Albert Einstein formuló la teoría de la relatividad especial en 1905 mientras trabajaba en la Oficina de Patentes de Berna y vivía en un piso de la Kramgasse."
+    ]
+   }
+  },
+  {
+   "day": 7,
+   "date": "2026-08-16",
+   "title": "Casco viejo de Ginebra y vuelta a casa",
    "hero_image": "",
    "timeline": [
     {
      "time": "07:45",
      "icon": "☕",
      "title": "Desayuno y salida del hotel",
-     "description": "Con el vuelo a las 15:15 y el coche que devolver, la mañana útil son unas tres horas justas. Lo lógico es dejar todo el equipaje en consigna en el hotel o directamente en el coche.",
+     "description": "Con el coche que devolver y el vuelo de la tarde, la mañana útil son unas tres horas. Lo lógico es dejar el equipaje en consigna en el hotel o directamente en el maletero.",
      "type": "checkout",
-     "duration_min": 40
+     "duration_min": 45
     },
     {
-     "time": "08:30",
+     "time": "08:35",
      "icon": "🚆",
-     "title": "Al centro en tren",
-     "description": "El tren del aeropuerto llega a Cornavin en seis minutos y desde ahí son quince andando hasta la ciudad alta. Con la tarjeta de transporte del hotel sale gratis y evita el problema de aparcar en el casco viejo.",
+     "title": "Al centro en transporte público",
+     "description": "Tranvía o autobús desde Palexpo hasta Cornavin, gratis con la tarjeta del hotel. Desde ahí, quince minutos andando hasta la ciudad alta cruzando el Ródano.",
      "type": "transport",
-     "duration_min": 30
+     "duration_min": 35
     },
     {
-     "time": "09:00",
+     "time": "09:15",
      "icon": "🏛️",
      "title": "Ciudad alta y catedral de Saint-Pierre",
-     "description": "Subida por las callejuelas hasta la Place du Bourg-de-Four, la plaza más antigua de Ginebra, y la catedral donde predicó Calvino durante veintitrés años. Los sábados el interior abre a mediodía, así que la visita será por fuera.",
+     "description": "Subida por las callejuelas hasta la Place du Bourg-de-Four, la plaza más antigua de la ciudad, y la catedral donde predicó Calvino durante veintitrés años. Los domingos el interior no abre hasta mediodía, así que la visita es del exterior y del entorno, que ya justifica el paseo.",
      "type": "visit",
      "place_id": "cathedrale-saint-pierre",
      "duration_min": 60
     },
     {
-     "time": "10:00",
+     "time": "10:20",
      "icon": "🪑",
      "title": "Promenade de la Treille y muro de la Reforma",
      "description": "El banco de madera más largo del mundo, 126 metros mirando a los tejados de la ciudad baja, y bajando al Parc des Bastions el muro de la Reforma con Calvino, Farel, Beza y Knox tallados a escala colosal.",
      "type": "visit",
+     "duration_min": 50
+    },
+    {
+     "time": "11:15",
+     "icon": "🚆",
+     "title": "Vuelta al aeropuerto",
+     "description": "Tranvía o autobús a Cornavin y tren al aeropuerto, seis minutos. Conviene salir con margen: es domingo de agosto y la terminal va cargada.",
+     "type": "transport",
      "duration_min": 45
     },
     {
-     "time": "10:45",
-     "icon": "⛲",
-     "title": "Reloj de flores y Jet d'Eau",
-     "description": "Bajada al lago por el Jardin Anglais, con el reloj floral, y paseo hasta la base del Jet d'Eau, ciento cuarenta metros de agua disparada al cielo. En agosto funciona de 9:00 a 23:15, tiempo permitiendo.",
-     "type": "visit",
-     "place_id": "jet-deau",
-     "duration_min": 60
-    },
-    {
-     "time": "11:45",
-     "icon": "🚆",
-     "title": "Vuelta al aeropuerto",
-     "description": "Tren desde Cornavin, seis minutos. Conviene salir con margen: es sábado de agosto y la terminal va cargada.",
-     "type": "transport",
-     "duration_min": 35
-    },
-    {
-     "time": "12:30",
+     "time": "12:15",
      "icon": "🚗",
      "title": "Devolución del coche de alquiler",
      "description": "En el sector suizo del aeropuerto, el mismo donde se recogió. Interesa hacer fotos del vehículo por los cuatro costados y de las llantas antes de entregar las llaves.",
      "type": "transport",
-     "duration_min": 30
+     "duration_min": 35
     },
     {
-     "time": "13:10",
+     "time": "13:00",
      "icon": "🛄",
-     "title": "Facturación y control",
-     "description": "Dos horas de margen antes del vuelo. En agosto los controles de Ginebra tienen colas largas los sábados.",
+     "title": "Facturación y control de seguridad",
+     "description": "En agosto los controles de Ginebra acumulan colas largas los fines de semana. Dos horas de margen no sobran.",
      "type": "transport",
-     "duration_min": 125
+     "duration_min": 135
     },
     {
      "time": "15:15",
      "icon": "✈️",
-     "title": "Vuelo a Alicante",
-     "description": "Dos horas y cinco minutos de vuelo. Llegada a las 17:20.",
+     "title": "Vuelo de vuelta a Alicante",
+     "description": "HORA PROVISIONAL: es la que se dio cuando el regreso estaba previsto para el sábado 15. Conviene confirmar el horario real del vuelo del domingo 16 y ajustar toda la mañana en consecuencia.",
      "type": "transport",
      "duration_min": 125
     }
@@ -2906,20 +3383,6 @@ body.is-offline .offline-chip { display: inline-flex; }
      "price": "Entrada gratuita a la nave. La subida a la torre y el yacimiento arqueológico se pagan aparte",
      "tips": "AVISO IMPORTANTE: el 15 de agosto es sábado y el interior no abre hasta las 12:00, con el vuelo a las 15:15 de por medio. La visita de este día será por fuera y por el entorno, que ya merece el paseo. Quien quiera entrar tendría que reorganizar la mañana o dejarlo para otro viaje. Los 157 escalones de la torre dan la mejor panorámica de Ginebra, pero se pagan y tampoco abren antes de mediodía el sábado.",
      "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.2011267,6.1485159",
-     "verified_at": "2026-07-31"
-    },
-    {
-     "id": "jet-deau",
-     "name": "Jet d'Eau",
-     "coords": {
-      "lat": 46.2073889,
-      "lng": 6.1559028
-     },
-     "review": "El símbolo de Ginebra: quinientos litros de agua por segundo disparados a ciento cuarenta metros de altura desde un espigón del lago. Nació por accidente en 1886 como válvula de escape de la presión de la red hidráulica de la ciudad y acabó convertido en atracción. Se puede llegar caminando hasta la base por el espigón, donde el rocío empapa a quien pase con viento a favor. El paseo del lago que lleva hasta allí, con el Jardin Anglais y el reloj de flores, es agradable y llano.",
-     "hours": "Del 4 de mayo al 13 de septiembre, de 9:00 a 23:15, iluminado por la noche. Se apaga con viento fuerte o helada",
-     "price": "Gratuito",
-     "tips": "Conviene mirar la dirección del viento antes de caminar por el espigón: con viento cruzado se sale calado, lo cual con un vuelo por delante no es lo ideal. Para la foto sin mojarse, el mejor punto es el Quai Gustave-Ador o el Pont du Mont-Blanc. El reloj de flores del Jardin Anglais queda de camino.",
-     "gmaps_url": "https://www.google.com/maps/search/?api=1&query=46.2073889,6.1559028",
      "verified_at": "2026-07-31"
     }
    ],
@@ -2939,34 +3402,34 @@ body.is-offline .offline-chip { display: inline-flex; }
     }
    ],
    "alternative_plans": {
-    "more_time": "Con una hora más, el Museo Internacional de la Cruz Roja, a quince minutos del centro, es de los mejores museos de Suiza y especialmente potente para una adolescente. Abre a las 10:00. También está el barrio de Carouge, al otro lado del Arve, con aire sardo y muy poco turismo.",
-    "less_time": "Si la mañana se comprime, el mínimo son la Place du Bourg-de-Four, la catedral por fuera y la bajada al lago hasta el reloj de flores. El Jet d'Eau se ve perfectamente desde el Pont du Mont-Blanc sin acercarse al espigón.",
-    "rainy_day": "El casco viejo de Ginebra con lluvia se recorre igual, pero la alternativa a cubierto es el yacimiento arqueológico bajo la catedral, que abre por la mañana y documenta dos mil años de ciudad, o la Maison Tavel, la casa privada más antigua de Ginebra, convertida en museo de historia urbana y con entrada gratuita.",
-    "with_kids": "El banco de la Promenade de la Treille, con sus 126 metros, es de esas curiosidades que funcionan a cualquier edad. Y el espigón del Jet d'Eau, con el rocío cayendo encima, suele ser el mejor recuerdo del día."
+    "more_time": "Si el vuelo resulta ser más tarde de las 15:15, el Museo Internacional de la Cruz Roja está a quince minutos del centro, abre a las diez y es de los mejores museos de Suiza, además de especialmente potente para una adolescente. Otra opción es Carouge, al otro lado del Arve, un barrio de aire sardo con casi nada de turismo.",
+    "less_time": "Si el vuelo es de mañana, el plan se cae entero y lo sensato es desayunar en el hotel y ir directos al aeropuerto. Ginebra quedaría cubierta con la tarde y la noche del día 6.",
+    "rainy_day": "El casco viejo se recorre igual con paraguas, pero la alternativa a cubierto es la Maison Tavel, la casa privada más antigua de la ciudad, hoy museo de historia urbana y con entrada gratuita.",
+    "with_kids": "El banco de 126 metros de la Promenade de la Treille es de esas curiosidades que funcionan a cualquier edad, y el muro de la Reforma, con sus figuras de cinco metros, impresiona más de lo que sugiere la foto."
    },
    "logistics": {
-    "driving_km": 12,
-    "driving_time_min": 25,
-    "walking_km": 4.5,
-    "walking_time_min": 90,
-    "public_transport": "El tren une el aeropuerto con Cornavin en seis minutos y hay varias salidas por hora. Los alojamientos de Ginebra suelen entregar a sus huéspedes la Geneva Transport Card, que da transporte urbano gratuito durante la estancia; conviene pedirla en recepción al hacer el check-in."
+    "driving_km": 10,
+    "driving_time_min": 20,
+    "walking_km": 4,
+    "walking_time_min": 80,
+    "public_transport": "La tarjeta de transporte que entrega el hotel cubre tranvía, autobús y tren urbano, incluido el enlace con el aeropuerto. El tren une el aeropuerto con Cornavin en seis minutos y hay varias salidas por hora."
    },
    "info": {
     "travel_tips": [
-     "Con el vuelo a las 15:15 y el coche que devolver, la mañana útil son tres horas escasas. Da para una cosa hecha con calma, no para dos, y el casco viejo es la elección correcta.",
-     "Ir en tren al centro en lugar de en coche evita el problema del aparcamiento en la ciudad alta, que es caro y escaso, y con la tarjeta del hotel no cuesta nada.",
-     "El 15 de agosto es festivo en varios cantones católicos, pero no en Ginebra, que es protestante. Los comercios y el transporte funcionan con normalidad.",
+     "PENDIENTE DE CONFIRMAR: la hora del vuelo de vuelta. El horario de 15:15 a 17:20 se facilitó cuando el regreso estaba previsto para el sábado 15, y el viaje termina ahora el domingo 16. Toda la mañana depende de ese dato.",
+     "El 16 de agosto es domingo: la catedral de Saint-Pierre no abre el interior hasta las 12:00 y el comercio está cerrado casi por completo. El paseo por la ciudad alta funciona igual, pero conviene no contar con entrar en ningún sitio.",
+     "Ir al centro en transporte público en vez de en coche evita el aparcamiento de la ciudad alta, que es caro y escaso, y con la tarjeta del hotel no cuesta nada.",
      "Antes de devolver el coche merece la pena fotografiar la carrocería y las llantas por los cuatro costados. Hay reseñas recurrentes de cargos por arañazos menores en los mostradores del aeropuerto de Ginebra."
     ],
     "access": [
-     "Aeropuerto a Cornavin: 6 minutos de tren, varias salidas por hora.",
-     "Cornavin a la ciudad alta: 15 minutos andando cuesta arriba, o autobús urbano.",
-     "El casco viejo, el Parc des Bastions, el Jardin Anglais y el Jet d'Eau están todos a menos de veinte minutos a pie entre sí."
+     "Palexpo al centro: unos 20 minutos en tranvía o autobús, incluidos en la tarjeta del hotel.",
+     "Cornavin a la ciudad alta: 15 minutos andando cuesta arriba.",
+     "Aeropuerto a Cornavin: 6 minutos de tren, varias salidas por hora."
     ],
     "facts": [
-     "El Jet d'Eau no se diseñó como monumento: en 1886 era una válvula de seguridad para aliviar la presión de la red hidráulica de la ciudad cuando los talleres cerraban al final de la jornada.",
      "La catedral de Saint-Pierre perdió todas sus imágenes y altares en 1535, cuando Ginebra adoptó la Reforma. La piedra desnuda que se ve hoy es consecuencia directa de aquello.",
-     "El banco de la Promenade de la Treille mide 126 metros y está considerado el banco de madera más largo del mundo."
+     "El banco de la Promenade de la Treille mide 126 metros y está considerado el banco de madera más largo del mundo.",
+     "El Jet d'Eau no se diseñó como monumento: en 1886 era una válvula de seguridad para aliviar la presión de la red hidráulica cuando los talleres cerraban al final de la jornada."
     ]
    }
   }
@@ -2994,7 +3457,11 @@ body.is-offline .offline-chip { display: inline-flex; }
     },
     {
      "subtitle": "La semana antes",
-     "text": "Reservar mesa en el Wirtshaus Taube de Lucerna para la cena del día 4, sobre todo si se quiere terraza junto al río. Es la única cena de restaurante planificada del viaje y en agosto se llena. Con el resto de comidas resueltas por picnic, esta es la que conviene asegurar."
+     "text": "Reservar mesa en el Wirtshaus Taube de Lucerna para la cena del día 5, sobre todo si se quiere terraza junto al río. Es la única cena de restaurante planificada del viaje y en agosto se llena. Con el resto de comidas resueltas por picnic, esta es la que conviene asegurar."
+    },
+    {
+     "subtitle": "La semana antes",
+     "text": "Confirmar la hora exacta del vuelo de vuelta del domingo 16 de agosto. El horario que consta en esta guía, de 15:15 a 17:20, se facilitó cuando el regreso estaba previsto para el sábado 15, así que puede no ser el correcto. Toda la mañana del último día depende de ese dato: con un vuelo de mañana no hay tiempo para Ginebra y habría que ir directos al aeropuerto."
     },
     {
      "subtitle": "La víspera",
@@ -3007,6 +3474,10 @@ body.is-offline .offline-chip { display: inline-flex; }
     {
      "subtitle": "En cuanto se confirme cada alojamiento",
      "text": "Preguntar si entregan tarjeta de huésped. La de Interlaken incluye el transporte local gratuito, la de la zona de Adelboden y Kandersteg da un 10 % de descuento en el telecabina del Oeschinensee y evita la reserva de franja horaria, y los alojamientos de Ginebra suelen dar la Geneva Transport Card, que resuelve el desplazamiento al centro de la mañana del día 6 sin pagar ni aparcar."
+    },
+    {
+     "subtitle": "La víspera de cada cambio de alojamiento",
+     "text": "Son seis alojamientos distintos en seis noches y cada uno funciona de una manera. El de Ormont-Dessus es un Airbnb con instrucciones de acceso propias; el Anstatthotel de Horw no tiene recepción y se entra con un código de la aplicación, y ese día se llega de noche después de cenar en Lucerna. Conviene tener descargados los códigos, las direcciones y los teléfonos antes de salir por la mañana, porque en los valles la cobertura falla."
     }
    ]
   },
@@ -3041,6 +3512,36 @@ body.is-offline .offline-chip { display: inline-flex; }
    ]
   },
   {
+   "icon": "🛏️",
+   "title": "Los seis alojamientos y cómo encajan",
+   "items": [
+    {
+     "subtitle": "Día 1 · Ormont-Dessus (Airbnb)",
+     "text": "A diez minutos del Col du Pillon, que es exactamente lo que permite estar en la primera cabina del Glacier 3000 a las nueve sin madrugar de forma heroica. Conviene llevar descargadas las instrucciones de acceso del anfitrión."
+    },
+    {
+     "subtitle": "Día 2 · Swiss Chalet Holidays, Ringgenberg",
+     "text": "Sobre el lago de Brienz, a seis kilómetros de Interlaken. Las habitaciones llevan cocina con placa de inducción: es el sitio donde dejar preparada la comida del día del Schilthorn, que empieza a las siete de la mañana."
+    },
+    {
+     "subtitle": "Día 3 · Walter's Hostel, Interlaken",
+     "text": "El más céntrico del Oberland y el que queda más cerca del final del día en Lauterbrunnen, apenas veinticinco minutos. Tiene cocina común y lavadora, así que es el momento del viaje para poner una lavadora a mitad de recorrido."
+    },
+    {
+     "subtitle": "Día 4 · B&B Brienz",
+     "text": "Dormir aquí en lugar de seguir hasta Lucerna es lo que devuelve a la garganta de Rosenlaui sus dos horas y media: queda a media hora, no a hora y media. Además es el único alojamiento con desayuno casero incluido, y el día 5 empieza pronto."
+    },
+    {
+     "subtitle": "Día 5 · Anstatthotel Horw",
+     "text": "A ocho kilómetros de Lucerna, con entrada automática por aplicación las veinticuatro horas. Eso es lo que permite cenar tranquilos en el casco viejo y llegar a las diez de la noche sin depender de ninguna recepción."
+    },
+    {
+     "subtitle": "Día 6 · ibis budget Genève Palexpo",
+     "text": "A diez minutos a pie de la terminal. En recepción entregan gratis la tarjeta de transporte de Ginebra, que cubre tranvía, autobús y tren urbano: es lo que hace innecesario meter el coche en el centro ni esa tarde ni la mañana siguiente."
+    }
+   ]
+  },
+  {
    "icon": "🎫",
    "title": "Half Fare, Junior Card y cómo funcionan los descuentos",
    "items": [
@@ -3059,6 +3560,10 @@ body.is-offline .offline-chip { display: inline-flex; }
     {
      "subtitle": "El Swiss Travel Pass no compensa aquí",
      "text": "Con coche de alquiler y solo cuatro trayectos de montaña, el abono de transporte ilimitado no llega a amortizarse. La combinación de Half Fare más Junior Card es exactamente la correcta para este viaje. Merece la pena revisar el cálculo solo si el itinerario cambiara mucho hacia el tren."
+    },
+    {
+     "subtitle": "El único tramo largo de autopista",
+     "text": "Los 265 kilómetros del día 6, entre Horw, Berna y Ginebra, son el único trayecto verdaderamente largo del viaje, y van partidos en dos por la parada en la capital. El resto de días se mueve entre 70 y 200 kilómetros de carretera bonita. Conviene repostar antes de salir de Berna, porque el combustible en las áreas de la autopista sale más caro."
     }
    ]
   },
@@ -3089,6 +3594,10 @@ body.is-offline .offline-chip { display: inline-flex; }
     {
      "subtitle": "Comer al mediodía en lugar de por la noche",
      "text": "El menú del mediodía en Suiza suele costar la mitad que la misma carta por la noche. Si en algún momento apetece un restaurante extra, mejor al mediodía."
+    },
+    {
+     "subtitle": "La cuenta aproximada del viaje",
+     "text": "Con los vuelos (615 €) y los seis alojamientos (942 €) ya pagados, lo que queda por delante ronda los 1.100 €: unos 350 francos de teleféricos y entradas con los descuentos aplicados, 40 de viñeta, unos 110 de gasolina para los 1.100 kilómetros del recorrido, entre 70 y 100 de aparcamientos y el resto en comida. Llevando la comida y con las tarjetas de descuento, los 1.000 € previstos se quedan algo cortos pero no mucho."
     }
    ]
   },
@@ -3262,7 +3771,7 @@ body.is-offline .offline-chip { display: inline-flex; }
    "items": [
     {
      "subtitle": "Las horas buenas de cada día",
-     "text": "El día 1, el Lac Retaud a partir de las seis de la tarde con luz rasante sobre el Oldenhorn. El día 2, las cascadas de Engstligen a última hora. El día 3, la Staubbachfall a partir de las cinco y media, que es cuando el sol entra en el valle por el oeste. El día 5, la travesía del lago a primera hora. La guía calcula automáticamente el amanecer, el anochecer y las dos horas doradas de cada jornada."
+     "text": "En agosto, en los valles del Oberland, en Lucerna, en Berna y en Ginebra, las máximas rondan los veinticuatro o veintiséis grados y las mínimas bajan a diez o doce. Es agradable de día y fresco al amanecer, justo cuando arranca el día 4. Estadísticamente llueve entre ocho y quince días del mes, así que lo más probable es pillar algo de agua. Ginebra y Berna suelen ir dos o tres grados por encima de los valles alpinos."
     },
     {
      "subtitle": "El trípode y las multitudes",
@@ -3302,7 +3811,7 @@ body.is-offline .offline-chip { display: inline-flex; }
    "Chanclas para el alojamiento y para los lagos"
   ],
   "underwear": [
-   "Ropa interior para seis días más una muda extra",
+   "Ropa interior para siete días más una muda extra",
    "Calcetines de trekking (5 pares)",
    "Pijama"
   ],
@@ -3341,6 +3850,7 @@ body.is-offline .offline-chip { display: inline-flex; }
    "Reservas de alojamiento y localizadores de vuelo",
    "Confirmación de la franja horaria del Oeschinensee",
    "Póliza del seguro de viaje con la cobertura de rescate",
+   "Instrucciones de acceso del Airbnb y código de la aplicación del Anstatthotel",
    "Bolígrafo"
   ],
   "toiletries": [
@@ -3436,11 +3946,11 @@ body.is-offline .offline-chip { display: inline-flex; }
   }
  ],
  "generation_metadata": {
-  "generated_at": "2026-07-31T18:00:00Z",
+  "generated_at": "2026-07-31T19:30:00Z",
   "schema_version": "1.2",
   "claude_model": "Claude Opus 4.6",
   "web_search_count": 20,
-  "verification_note": "Verificados en fuente oficial el 31 de julio de 2026: tarifas y horarios de Glacier 3000, Schilthorn, Oeschinensee (incluida la reserva obligatoria de franja horaria del 20 de junio al 20 de septiembre), Trümmelbachfälle y castillo de Chillon; horarios del barco Lucerna-Kehrsiten y del ascensor de Hammetschwand; precio y régimen de la viñeta de autopista. Veintiocho coordenadas verificadas con la base de datos de lugares. SIN VERIFICAR y pendientes de confirmar in situ o en la web oficial: el precio exacto de la entrada de la garganta glaciar de Rosenlaui, el precio infantil del ascensor de Hammetschwand, la coordenada exacta del Peak Walk (anclada a la estación superior del Scex Rouge) y el caudal de la Cascade du Dar en agosto, que varía mucho de un año a otro. El horario sabatino de la catedral de Saint-Pierre (apertura a las 12:00) procede de la ficha del establecimiento y conviene contrastarlo si se quiere entrar."
+  "verification_note": "Verificados en fuente oficial: tarifas y horarios de Glacier 3000, Schilthorn, Oeschinensee (incluida la reserva obligatoria de franja del 20 de junio al 20 de septiembre), Trümmelbachfälle y castillo de Chillon; horarios del barco Lucerna-Kehrsiten y del ascensor de Hammetschwand; precio y régimen de la viñeta de autopista. Treinta y ocho coordenadas verificadas con la base de datos de lugares, incluidos los seis alojamientos y las cuatro paradas de Berna. PENDIENTE Y CRÍTICO: la hora real del vuelo de vuelta del domingo 16 de agosto; la que figura (15:15) se dio para el sábado 15 y condiciona toda la mañana del día 7. SIN VERIFICAR: el precio exacto de la entrada de la garganta glaciar de Rosenlaui, el precio infantil del ascensor de Hammetschwand, la coordenada del Peak Walk (anclada a la estación superior del Scex Rouge) y el caudal de la Cascade du Dar en agosto. El horario dominical de la catedral de Saint-Pierre (apertura a las 12:00) procede de la ficha del establecimiento. NOTA DE RUTA: se han descartado las Cataratas del Rin que figuraban en la planificación previa, porque están en Schaffhausen, en dirección opuesta, y añadirían más de dos horas y media de coche al día 6."
  }
 }
 </script>
@@ -3637,6 +4147,17 @@ body.is-offline .offline-chip { display: inline-flex; }
     `;
   }
 
+  // Minutos -> "1 h 27 min" / "45 min". Devuelve '' si no hay dato.
+  function fmtDur(min) {
+    var m = Number(min);
+    if (!isFinite(m) || m <= 0) return '';
+    m = Math.round(m);
+    var h = Math.floor(m / 60), r = m % 60;
+    if (h && r) return h + ' h ' + r + ' min';
+    if (h) return h + ' h';
+    return r + ' min';
+  }
+
   // --- DAY DETAIL -----------------------------------------
   function renderDay(dayNum) {
     const d = DATA.days.find(x => x.day === dayNum);
@@ -3646,10 +4167,16 @@ body.is-offline .offline-chip { display: inline-flex; }
       const key = `d${d.day}_t${idx}`;
       const done = !!store.checklist[key];
       const place = t.place_id ? (d.places || []).find(p => p.id === t.place_id) : null;
+      // Los hitos de tipo transporte muestran el tiempo de trayecto; el resto, cuanto dura la parada
+      const isMove = t.type === 'transport';
+      const durTxt = fmtDur(t.duration_min);
+      const durHTML = durTxt
+        ? `<span class="tl-item__dur ${isMove ? 'tl-item__dur--move' : ''}" title="${isMove ? 'Tiempo de trayecto' : 'Duración aproximada'}">${isMove ? '🚙' : '⏱'} ${esc(durTxt)}</span>`
+        : '';
       return `
         <div class="tl-item ${done ? 'is-done' : ''}" data-icon="${esc(t.icon || '•')}" data-key="${key}">
           <div class="tl-item__head">
-            <span class="tl-item__time">${esc(t.time)}</span>
+            <span class="tl-item__when"><span class="tl-item__time">${esc(t.time)}</span>${durHTML}</span>
             <button class="tl-item__check" onclick="window.__actions.toggleChecklist('${key}')"></button>
           </div>
           <div class="tl-item__title">${esc(t.title)}</div>
@@ -3880,22 +4407,108 @@ body.is-offline .offline-chip { display: inline-flex; }
     });
   }
 
-  function openPhotoLightbox(url, onDelete) {
+  // Visor a pantalla completa con carrusel: recibe la lista completa de fotos
+  // del lugar y el indice por el que se abre, de modo que se pasan de una a
+  // otra sin cerrar. Admite flechas, teclado, deslizar el dedo y puntos.
+  // Cada elemento es { url, del } donde del es null si la foto es del repositorio.
+  function openPhotoLightbox(items, startIdx) {
+    if (!Array.isArray(items)) items = [{ url: items, del: arguments[1] || null }];
+    if (!items.length) return;
+    var i = Math.max(0, Math.min(startIdx || 0, items.length - 1));
+
     const ov = document.createElement('div');
     ov.className = 'photo-lightbox';
-    const img = document.createElement('img'); img.src = url; img.alt = 'Foto del lugar';
+
+    const stage = document.createElement('div'); stage.className = 'photo-lightbox__stage';
+    const img = document.createElement('img'); img.alt = 'Foto del lugar';
+    const prev = document.createElement('button');
+    prev.type = 'button'; prev.className = 'photo-lightbox__nav photo-lightbox__nav--prev';
+    prev.setAttribute('aria-label', 'Foto anterior'); prev.textContent = '\u2039';
+    const next = document.createElement('button');
+    next.type = 'button'; next.className = 'photo-lightbox__nav photo-lightbox__nav--next';
+    next.setAttribute('aria-label', 'Foto siguiente'); next.textContent = '\u203a';
+    stage.appendChild(prev); stage.appendChild(img); stage.appendChild(next);
+
+    const count = document.createElement('div'); count.className = 'photo-lightbox__count';
+    const dots = document.createElement('div'); dots.className = 'photo-lightbox__dots';
+
     const bar = document.createElement('div'); bar.className = 'photo-lightbox__bar';
-    const bClose = document.createElement('button'); bClose.type = 'button'; bClose.className = 'photo-lightbox__btn'; bClose.textContent = 'Cerrar';
-    const bDel = document.createElement('button'); bDel.type = 'button'; bDel.className = 'photo-lightbox__btn'; bDel.textContent = 'Eliminar';
-    bar.appendChild(bClose); if (onDelete) bar.appendChild(bDel);
-    ov.appendChild(img); ov.appendChild(bar);
-    function close() { ov.remove(); }
+    const bClose = document.createElement('button');
+    bClose.type = 'button'; bClose.className = 'photo-lightbox__btn'; bClose.textContent = 'Cerrar';
+    const bDel = document.createElement('button');
+    bDel.type = 'button'; bDel.className = 'photo-lightbox__btn'; bDel.textContent = 'Eliminar';
+    bar.appendChild(bClose); bar.appendChild(bDel);
+
+    ov.appendChild(stage); ov.appendChild(count); ov.appendChild(dots); ov.appendChild(bar);
+
+    function buildDots() {
+      dots.innerHTML = '';
+      if (items.length < 2) return;
+      items.forEach(function (_, k) {
+        const d = document.createElement('button');
+        d.type = 'button'; d.className = 'photo-lightbox__dot' + (k === i ? ' is-on' : '');
+        d.setAttribute('aria-label', 'Ir a la foto ' + (k + 1));
+        d.addEventListener('click', function (e) { e.stopPropagation(); i = k; paint(); });
+        dots.appendChild(d);
+      });
+    }
+    function paint() {
+      const multi = items.length > 1;
+      img.src = items[i].url;
+      prev.style.display = multi ? '' : 'none';
+      next.style.display = multi ? '' : 'none';
+      count.style.display = multi ? '' : 'none';
+      count.textContent = (i + 1) + ' / ' + items.length;
+      bDel.style.display = items[i].del ? '' : 'none';
+      buildDots();
+    }
+    function go(step) {
+      if (items.length < 2) return;
+      i = (i + step + items.length) % items.length;
+      paint();
+    }
+    function close() {
+      document.removeEventListener('keydown', onKey);
+      ov.remove();
+    }
+    function onKey(e) {
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowRight') go(1);
+      else if (e.key === 'ArrowLeft') go(-1);
+    }
+
+    prev.addEventListener('click', function (e) { e.stopPropagation(); go(-1); });
+    next.addEventListener('click', function (e) { e.stopPropagation(); go(1); });
     bClose.addEventListener('click', close);
     ov.addEventListener('click', function (e) { if (e.target === ov) close(); });
+    document.addEventListener('keydown', onKey);
+
+    // Deslizar el dedo en movil
+    var x0 = null, y0 = null;
+    stage.addEventListener('touchstart', function (e) {
+      if (e.touches.length !== 1) return;
+      x0 = e.touches[0].clientX; y0 = e.touches[0].clientY;
+    }, { passive: true });
+    stage.addEventListener('touchend', function (e) {
+      if (x0 === null) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - x0, dy = t.clientY - y0;
+      x0 = y0 = null;
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? 1 : -1);
+    }, { passive: true });
+
     bDel.addEventListener('click', function () {
+      const d = items[i].del;
+      if (!d) return;
       if (!confirm('¿Eliminar esta foto?')) return;
-      onDelete(); close();
+      d();
+      items.splice(i, 1);
+      if (!items.length) { close(); return; }
+      if (i >= items.length) i = items.length - 1;
+      paint();
     });
+
+    paint();
     document.body.appendChild(ov);
   }
 
@@ -3906,21 +4519,30 @@ body.is-offline .offline-chip { display: inline-flex; }
     ]).then(function (both) {
       const repo = both[0] || [], list = both[1] || [];
       grid.innerHTML = '';
-      // 1) Fotos del repositorio: las ve todo el mundo
+      // Lista unica compartidas + locales: es lo que recorre el carrusel
+      const carousel = [];
       var box = grid.closest ? grid.closest('.place-photos') : null;
       if (box) box.style.display = (!repo.length && !list.length && !AUTHOR_MODE) ? 'none' : '';
-      repo.forEach(function (url) { grid.appendChild(makeRepoTile(url)); });
+      // 1) Fotos del repositorio: las ve todo el mundo
+      repo.forEach(function (url) {
+        const idx = carousel.length;
+        carousel.push({ url: url, del: null });
+        grid.appendChild(makeRepoTile(url, carousel, idx));
+      });
       // 2) Solo en modo autor: hueco con el nombre de archivo que debe subirse
       if (!repo.length && AUTHOR_MODE) grid.appendChild(makeEmptyTile(placeId));
       // 3) Fotos locales de este dispositivo
       list.forEach(function (rec) {
         const url = URL.createObjectURL(rec.blob);
         __photoURLs.add(url);
+        const idx = carousel.length;
+        carousel.push({
+          url: url,
+          del: function () { photoDel(rec.id).then(function () { paintPhotoGrid(placeId, grid); }); }
+        });
         const fig = document.createElement('div'); fig.className = 'place-photo';
         const img = document.createElement('img'); img.src = url; img.alt = 'Foto del lugar'; img.loading = 'lazy';
-        img.addEventListener('click', function () {
-          openPhotoLightbox(url, function () { photoDel(rec.id).then(function () { paintPhotoGrid(placeId, grid); }); });
-        });
+        img.addEventListener('click', function () { openPhotoLightbox(carousel, idx); });
         const del = document.createElement('button');
         del.type = 'button'; del.className = 'place-photo__del'; del.setAttribute('aria-label', 'Eliminar foto'); del.textContent = '×';
         del.addEventListener('click', function (ev) {
@@ -3932,6 +4554,15 @@ body.is-offline .offline-chip { display: inline-flex; }
         bdg.className = 'place-photo__badge'; bdg.textContent = '📱';
         fig.appendChild(img); fig.appendChild(bdg); fig.appendChild(del); grid.appendChild(fig);
       });
+      // Numerito de posicion cuando hay mas de una foto, para que se vea que hay carrusel
+      if (carousel.length > 1) {
+        var tiles = grid.querySelectorAll('.place-photo:not(.place-photo--empty)');
+        for (var n = 0; n < tiles.length; n++) {
+          var sp = document.createElement('span');
+          sp.className = 'place-photo__n'; sp.textContent = (n + 1) + '/' + carousel.length;
+          tiles[n].appendChild(sp);
+        }
+      }
     }).catch(function () {
       grid.innerHTML = '<div class="place-photos__empty">No se han podido cargar las fotos en este navegador.</div>';
     });
@@ -4038,10 +4669,13 @@ body.is-offline .offline-chip { display: inline-flex; }
     }
   }
 
-  function makeRepoTile(url) {
+  function makeRepoTile(url, carousel, idx) {
     const fig = document.createElement('div'); fig.className = 'place-photo';
     const img = document.createElement('img'); img.src = url; img.alt = 'Foto compartida'; img.loading = 'lazy';
-    img.addEventListener('click', function () { openPhotoLightbox(url, null); });
+    img.addEventListener('click', function () {
+      if (carousel) openPhotoLightbox(carousel, idx);
+      else openPhotoLightbox([{ url: url, del: null }], 0);
+    });
     const b = document.createElement('span'); b.className = 'place-photo__badge'; b.textContent = '🌐';
     fig.appendChild(img); fig.appendChild(b);
     return fig;
@@ -4414,8 +5048,10 @@ body.is-offline .offline-chip { display: inline-flex; }
       parts.push('<div class="pr-h4">Itinerario</div><ul class="pr-tl">');
       d.timeline.forEach(function (t, i) {
         var done = store.checklist['day' + d.day + '_tl' + i] ? '☑' : '☐';
+        var dur = fmtDur(t.duration_min);
+        var durTxt = dur ? ' <span class="pr-dur">(' + (t.type === 'transport' ? 'trayecto ' : '') + pe(dur) + ')</span>' : '';
         parts.push('<li><span class="pr-time">' + pe(t.time) + '</span>' + done + ' <strong>' +
-          pe(t.title) + '</strong>. ' + pe(t.description) + '</li>');
+          pe(t.title) + '</strong>' + durTxt + '. ' + pe(t.description) + '</li>');
       });
       parts.push('</ul>');
     }
