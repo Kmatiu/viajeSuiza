@@ -762,6 +762,7 @@ body.is-offline .offline-chip { display: inline-flex; }
 .place-photos__head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .place-photos__label { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
 .place-photos__status { font-size: 11.5px; color: var(--text-muted); margin-left: auto; }
+.place-photos__legend { font-size: 10.5px; color: var(--text-muted); opacity: 0.75; letter-spacing: 0.04em; cursor: help; }
 .place-photos__add { cursor: pointer; margin-left: auto; }
 .place-photos__status:not(:empty) + .place-photos__add { margin-left: 8px; }
 .place-photos__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
@@ -1095,6 +1096,7 @@ body.is-offline .offline-chip { display: inline-flex; }
 .weather-day__icon { font-size: 26px; margin: 4px 0; }
 .weather-day__temp { font-family: var(--font-display); font-size: 14px; font-weight: 700; }
 .weather-day__temp-min { color: var(--text-muted); font-weight: 400; }
+.weather-day--hist { border-style: dashed; opacity: 0.82; }
 
 /* =========================================================
    MODAL DE BÚSQUEDA
@@ -4219,6 +4221,7 @@ body.is-offline .offline-chip { display: inline-flex; }
           <div class="place-photos" data-place="${esc(p.id)}">
             <div class="place-photos__head">
               <span class="place-photos__label">📷 Fotos</span>
+              <span class="place-photos__legend" title="🌐 compartidas por el autor · 📱 guardadas solo en este dispositivo">🌐 / 📱</span>
               <span class="place-photos__status"></span>
               <label class="btn btn--ghost btn--sm place-photos__add">+ Añadir
                 <input type="file" accept="image/*" multiple hidden>
@@ -4521,8 +4524,10 @@ body.is-offline .offline-chip { display: inline-flex; }
       grid.innerHTML = '';
       // Lista unica compartidas + locales: es lo que recorre el carrusel
       const carousel = [];
+      // El bloque no se oculta nunca: el boton «+ Anadir» tiene que estar
+      // disponible aunque el lugar no tenga ninguna foto compartida todavia.
       var box = grid.closest ? grid.closest('.place-photos') : null;
-      if (box) box.style.display = (!repo.length && !list.length && !AUTHOR_MODE) ? 'none' : '';
+      if (box) box.style.display = '';
       // 1) Fotos del repositorio: las ve todo el mundo
       repo.forEach(function (url) {
         const idx = carousel.length;
@@ -4531,6 +4536,13 @@ body.is-offline .offline-chip { display: inline-flex; }
       });
       // 2) Solo en modo autor: hueco con el nombre de archivo que debe subirse
       if (!repo.length && AUTHOR_MODE) grid.appendChild(makeEmptyTile(placeId));
+      // 2 bis) Sin ninguna foto: invitacion a guardar las propias en el movil
+      if (!repo.length && !list.length && !AUTHOR_MODE) {
+        var hint = document.createElement('div');
+        hint.className = 'place-photos__empty';
+        hint.innerHTML = 'Todavía no hay fotos de este lugar. Con <strong>+ Añadir</strong> puedes guardar las tuyas: se quedan en este dispositivo (📱) y no se suben a ninguna parte.';
+        grid.appendChild(hint);
+      }
       // 3) Fotos locales de este dispositivo
       list.forEach(function (rec) {
         const url = URL.createObjectURL(rec.blob);
@@ -5738,7 +5750,7 @@ body.is-offline .offline-chip { display: inline-flex; }
         tg.className = 'map-toggle';
         tg.innerHTML = '<button data-mapmode="day">Días</button><button data-mapmode="photo">Fotos</button>';
         tg.querySelectorAll('button').forEach(function (b) {
-          b.classList.toggle('is-on', b.dataset.mapmode === mapPhotoMode);
+          b.setAttribute('type', 'button');
           b.addEventListener('click', function () {
             if (b.dataset.mapmode === mapPhotoMode) return;
             mapPhotoMode = b.dataset.mapmode;
@@ -5747,6 +5759,17 @@ body.is-offline .offline-chip { display: inline-flex; }
           });
         });
         mapEl.parentNode.appendChild(tg);
+      }
+
+      // El sombreado se sincroniza SIEMPRE, no solo al crear el conmutador:
+      // de lo contrario se queda marcada la opcion anterior tras cada cambio.
+      var tgNow = mapEl && mapEl.parentNode.querySelector('.map-toggle');
+      if (tgNow) {
+        tgNow.querySelectorAll('button').forEach(function (b) {
+          var on = b.dataset.mapmode === mapPhotoMode;
+          b.classList.toggle('is-on', on);
+          b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
       }
 
       mapInstance = L.map('map', { zoomControl: true, attributionControl: true })
@@ -6152,18 +6175,18 @@ body.is-offline .offline-chip { display: inline-flex; }
     const w = document.getElementById('weather-content');
     if (!w) return;
     const om = DATA.overview_map;
-    if (!om) { w.textContent = 'Sin coordenadas.'; return; }
+    if (!om || !om.center) { w.textContent = 'Sin coordenadas.'; return; }
 
     const start = DATA.meta.dates.start;
     const end   = DATA.meta.dates.end;
     const lat   = om.center.lat;
     const lng   = om.center.lng;
-
-    const today     = new Date(); today.setHours(0,0,0,0);
-    const tripStart = new Date(start + 'T00:00:00');
-    const tripEnd   = new Date(end   + 'T00:00:00');
-    const daysUntilStart = Math.round((tripStart - today) / 86400000);
-    const FORECAST_WINDOW = 14; // días que Open-Meteo garantiza con fiabilidad
+    const DAILY = 'weather_code,temperature_2m_max,temperature_2m_min';
+    const FC    = 'https://api.open-meteo.com/v1/forecast';
+    const AR    = 'https://archive-api.open-meteo.com/v1/archive';
+    // Open-Meteo sirve prevision hasta 15 dias por delante de hoy. Mas alla
+    // devuelve error, asi que ese tramo se cubre con el historico.
+    const FORECAST_DAYS = 15;
 
     const codes = {
       0:'☀️', 1:'🌤', 2:'⛅', 3:'☁️', 45:'🌫', 48:'🌫',
@@ -6172,76 +6195,96 @@ body.is-offline .offline-chip { display: inline-flex; }
       95:'⛈', 96:'⛈', 99:'⛈'
     };
 
-    function renderGrid(days, label) {
-      const html = days.map(d => `
-        <div class="weather-day">
-          <div class="weather-day__date">${fmtDate(d.date, { weekday: 'short', day: 'numeric' })}</div>
-          <div class="weather-day__icon">${d.icon}</div>
-          <div class="weather-day__temp">${d.max}° <span class="weather-day__temp-min">${d.min}°</span></div>
-        </div>`).join('');
-      const note = label ? `<p style="font-size:11px;color:var(--text-muted);margin:8px 0 0;text-align:center">${label}</p>` : '';
-      w.outerHTML = `<div id="weather-content">${note}<div class="weather-grid">${html}</div></div>`;
+    // Formato local: toISOString() convierte a UTC y en España restaria un dia
+    function iso(d) {
+      return d.getFullYear() + '-' +
+             String(d.getMonth() + 1).padStart(2, '0') + '-' +
+             String(d.getDate()).padStart(2, '0');
     }
+    function addDays(d, n) { const x = new Date(d); x.setDate(x.getDate() + n); return x; }
+    function shiftYear(s, n) { return s.replace(/^(\d{4})/, function (y) { return String(parseInt(y, 10) + n); }); }
 
-    // ── CASO 1: viaje ya pasó ────────────────────────────────────────────
+    const today     = new Date(); today.setHours(0, 0, 0, 0);
+    const tripStart = new Date(start + 'T00:00:00');
+    const tripEnd   = new Date(end   + 'T00:00:00');
+
     if (tripEnd < today) {
       w.innerHTML = '<span style="color:var(--text-muted);font-size:13px">El viaje ya ha finalizado.</span>';
       return;
     }
 
-    // ── CASO 2: viaje dentro del rango de previsión (≤14 días) ──────────
-    if (daysUntilStart <= FORECAST_WINDOW) {
-      try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&start_date=${start}&end_date=${end}`;
-        const r = await fetch(url);
-        if (!r.ok) throw new Error(r.status);
-        const j = await r.json();
-        if (!j.daily || !j.daily.time.length) throw new Error('sin datos');
-        const days = j.daily.time.map((t, i) => ({
-          date: t,
-          icon: codes[j.daily.weather_code[i]] || '🌡',
-          max:  Math.round(j.daily.temperature_2m_max[i]),
-          min:  Math.round(j.daily.temperature_2m_min[i])
-        }));
-        renderGrid(days, null);
-        return;
-      } catch (e) {
-        w.textContent = 'Error al obtener la previsión. Comprueba tu conexión.';
-        return;
-      }
-    }
-
-    // ── CASO 3: viaje a más de 14 días → datos históricos del año anterior
-    // Calculamos las mismas fechas del año pasado para obtener el clima típico
-    const lastYearStart = start.replace(/^(\d{4})/, y => String(parseInt(y) - 1));
-    const lastYearEnd   = end.replace(/^(\d{4})/, y => String(parseInt(y) - 1));
-    const availableFrom = new Date(tripStart);
-    availableFrom.setDate(availableFrom.getDate() - FORECAST_WINDOW);
-    const availableFromStr = availableFrom.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
-
-    try {
-      const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lng}&start_date=${lastYearStart}&end_date=${lastYearEnd}&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto`;
+    async function grab(base, a, b, hist) {
+      const url = base + '?latitude=' + lat + '&longitude=' + lng +
+                  '&daily=' + DAILY + '&timezone=auto&start_date=' + a + '&end_date=' + b;
       const r = await fetch(url);
       if (!r.ok) throw new Error(r.status);
       const j = await r.json();
-      if (!j.daily || !j.daily.time.length) throw new Error('sin datos');
-      const days = j.daily.time.map((t, i) => ({
-        date: t.replace(/^(\d{4})/, y => String(parseInt(y) + 1)), // mostrar con fecha real del viaje
-        icon: codes[j.daily.weather_code[i]] || '🌡',
-        max:  Math.round(j.daily.temperature_2m_max[i]),
-        min:  Math.round(j.daily.temperature_2m_min[i])
-      }));
-      renderGrid(days,
-        `📅 Previsión disponible aprox. el ${availableFromStr} · Datos: mismo periodo del año anterior`
-      );
-    } catch (e) {
-      // Fallback: mensaje claro sin datos históricos
-      w.innerHTML = `<span style="font-size:13px;color:var(--text-muted)">
-        La previsión meteorológica estará disponible aprox. el <strong>${availableFromStr}</strong>.
-        El viaje empieza en ${daysUntilStart} días, fuera del rango de previsión (${FORECAST_WINDOW} días).
-        Vuelve más cerca de la fecha para ver el tiempo real.
-      </span>`;
+      if (!j.daily || !j.daily.time || !j.daily.time.length) throw new Error('sin datos');
+      return j.daily.time.map(function (t, i) {
+        return {
+          date: hist ? shiftYear(t, 1) : t,
+          icon: codes[j.daily.weather_code[i]] || '🌡',
+          max:  Math.round(j.daily.temperature_2m_max[i]),
+          min:  Math.round(j.daily.temperature_2m_min[i]),
+          hist: !!hist
+        };
+      });
     }
+
+    const lastForecast = addDays(today, FORECAST_DAYS);
+    const fcFrom = tripStart < today ? today : tripStart;
+    const fcTo   = tripEnd > lastForecast ? lastForecast : tripEnd;
+
+    let days = [];
+    if (fcFrom <= fcTo) {
+      try { days = await grab(FC, iso(fcFrom), iso(fcTo), false); } catch (e) { days = []; }
+    }
+
+    // Lo que no cubre la prevision se completa con el mismo periodo del año pasado
+    const restFrom = days.length
+      ? addDays(new Date(days[days.length - 1].date + 'T00:00:00'), 1)
+      : (tripStart < today ? today : tripStart);
+    let faltan = false;
+    if (restFrom <= tripEnd) {
+      try {
+        days = days.concat(await grab(AR, shiftYear(iso(restFrom), -1), shiftYear(iso(tripEnd), -1), true));
+      } catch (e) { faltan = true; }
+    }
+
+    if (!days.length) {
+      const disponible = addDays(tripStart, -FORECAST_DAYS)
+        .toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+      w.innerHTML = '<span style="font-size:13px;color:var(--text-muted)">' +
+        'No se ha podido cargar el tiempo. Si el viaje aún queda lejos, la previsión real aparecerá hacia el <strong>' +
+        disponible + '</strong>. Comprueba también la conexión.</span>';
+      return;
+    }
+
+    const nHist = days.filter(function (d) { return d.hist; }).length;
+    let nota = '';
+    if (nHist && nHist < days.length) {
+      nota = 'Los ' + nHist + (nHist === 1 ? ' último día es del' : ' últimos días son del') +
+             ' mismo periodo del año pasado (borde discontinuo). La previsión real irá apareciendo según se acerque la fecha.';
+    } else if (nHist) {
+      nota = 'Datos del mismo periodo del año anterior. La previsión real estará disponible hacia el ' +
+             addDays(tripStart, -FORECAST_DAYS).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' }) + '.';
+    }
+    if (faltan) {
+      nota = (nota ? nota + ' ' : '') + 'No se han podido recuperar los últimos días.';
+    }
+
+    const html = days.map(function (d) {
+      return '<div class="weather-day' + (d.hist ? ' weather-day--hist' : '') + '"' +
+             (d.hist ? ' title="Dato del mismo día del año pasado, no es una previsión"' : '') + '>' +
+             '<div class="weather-day__date">' + fmtDate(d.date, { weekday: 'short', day: 'numeric' }) + '</div>' +
+             '<div class="weather-day__icon">' + d.icon + '</div>' +
+             '<div class="weather-day__temp">' + d.max + '° <span class="weather-day__temp-min">' + d.min + '°</span></div>' +
+             '</div>';
+    }).join('');
+    const notaHTML = nota
+      ? '<p style="font-size:11px;color:var(--text-muted);margin:8px 0 0;text-align:center;line-height:1.45">' + nota + '</p>'
+      : '';
+    w.outerHTML = '<div id="weather-content"><div class="weather-grid">' + html + '</div>' + notaHTML + '</div>';
   }
 
   function renderMeBudget() {
