@@ -5,6 +5,45 @@
       "titulo": "Glacier 3000",
       "tipo": "mapa",
       "dia": 2
+    },
+    {
+      "archivo": "a3-glacier3000-wanderkarte-ete25-web.pdf",
+      "titulo": "Glacier 3000 — mapa de senderos de verano",
+      "tipo": "mapa",
+      "dia": 2
+    },
+    {
+      "archivo": "infoguide-murren-sommer.pdf",
+      "titulo": "Info Guide de Mürren en verano",
+      "dia": 3,
+      "imprescindible": true
+    },
+    {
+      "enlace": "https://oeschinensee.ch",
+      "titulo": "Oeschinensee",
+      "tipo": "web",
+      "dia": 4
+    },
+    {
+      "archivo": "kandersteg-sommerpanoramakarte.pdf",
+      "titulo": "Panorámica de verano de Kandersteg",
+      "tipo": "mapa",
+      "dia": 4,
+      "imprescindible": true
+    },
+    {
+      "archivo": "fahrplan-sommer-23-05-06-09-2026.pdf",
+      "titulo": "Horario de verano del barco de Lucerna",
+      "tipo": "transporte",
+      "dia": 5,
+      "imprescindible": true
+    },
+    {
+      "archivo": "01-bern-city-map-aktuell-c-bern-welcome.pdf",
+      "titulo": "Mapa de Berna",
+      "tipo": "mapa",
+      "dia": 6,
+      "imprescindible": true
     }
   ]
 }
