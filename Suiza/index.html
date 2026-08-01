@@ -874,24 +874,19 @@ body.is-offline .offline-chip { display: inline-flex; }
 /* =========================================================
    MAPA
    ========================================================= */
-#map-container { padding-bottom: 46px; position: relative; height: calc(100dvh - var(--tabbar-height) - var(--safe-bottom) - var(--safe-top) - 120px); min-height: 300px; max-height: 700px; margin: 0 -20px; border-radius: 0; }
+#map-container { padding-bottom: 46px; position: relative; height: calc(100dvh - var(--tabbar-height) - var(--safe-bottom) - var(--safe-top) - 210px); min-height: 300px; max-height: 640px; margin: 0 -20px; border-radius: 0; }
 @supports not (height: 100dvh) {
-  #map-container { height: calc(100vh - var(--tabbar-height) - var(--safe-bottom) - 140px); }
+  #map-container { height: calc(100vh - var(--tabbar-height) - var(--safe-bottom) - 230px); }
 }
 #map { height: 100%; width: 100%; }
 .map-legend {
-  position: absolute;
-  bottom: 14px;
-  left: 14px;
-  right: 14px;
-  z-index: 500;
-  background: color-mix(in srgb, var(--bg-card) 95%, transparent);
-  backdrop-filter: blur(8px);
+  margin: 12px 0 0;
+  background: var(--bg-card);
   border-radius: var(--radius);
-  padding: 10px 12px;
+  padding: 11px 13px;
   font-size: 12px;
+  line-height: 1.55;
   color: var(--text-soft);
-  box-shadow: var(--shadow);
   border: 1px solid var(--line);
 }
 .leaflet-popup-content-wrapper { border-radius: var(--radius) !important; }
@@ -1215,8 +1210,8 @@ body.is-offline .offline-chip { display: inline-flex; }
   <h2 class="section-title" style="margin-top:0">Mapa del viaje</h2>
   <div id="map-container">
     <div id="map"></div>
-    <div class="map-legend">Las líneas unen las paradas de cada día en el orden del itinerario. Son trazos rectos, no rutas de carretera: sirven para leer la forma del día, no para navegar. Con «Todos» se ven discontinuas y numeradas por día; al elegir un día concreto pasan a ser continuas y los números indican el orden de las paradas.</div>
   </div>
+  <div class="map-legend">Las líneas unen las paradas de cada día en el orden del itinerario. Son trazos rectos, no rutas de carretera: sirven para leer la forma del día, no para navegar. Con «Todos» se ven discontinuas y numeradas por día. Al elegir un día concreto pasan a continuas, los números indican el orden de las paradas y aparece 🛏 en el alojamiento del que se sale esa mañana.</div>
 </main>
 
 <!-- CONSEJOS -->
@@ -1428,6 +1423,15 @@ body.is-offline .offline-chip { display: inline-flex; }
   "markers": [
    {
     "day": 1,
+    "name": "Aeropuerto de Ginebra (recogida del coche)",
+    "coords": {
+     "lat": 46.2271705,
+     "lng": 6.1026324
+    },
+    "origin": true
+   },
+   {
+    "day": 1,
     "name": "Castillo de Chillon",
     "coords": {
      "lat": 46.4142131,
@@ -1477,6 +1481,15 @@ body.is-offline .offline-chip { display: inline-flex; }
    },
    {
     "day": 2,
+    "name": "Apartamento en Ormont-Dessus (Airbnb)",
+    "coords": {
+     "lat": 46.3514572,
+     "lng": 7.1581571
+    },
+    "origin": true
+   },
+   {
+    "day": 2,
     "name": "Glacier 3000 (Scex Rouge)",
     "coords": {
      "lat": 46.3539288,
@@ -1522,6 +1535,15 @@ body.is-offline .offline-chip { display: inline-flex; }
      "lat": 46.7001675,
      "lng": 7.8894684
     }
+   },
+   {
+    "day": 3,
+    "name": "Swiss Chalet Holidays, Ringgenberg",
+    "coords": {
+     "lat": 46.7001675,
+     "lng": 7.8894684
+    },
+    "origin": true
    },
    {
     "day": 3,
@@ -1581,6 +1603,15 @@ body.is-offline .offline-chip { display: inline-flex; }
    },
    {
     "day": 4,
+    "name": "Walter's Hostel, Interlaken",
+    "coords": {
+     "lat": 46.6841135,
+     "lng": 7.8680163
+    },
+    "origin": true
+   },
+   {
+    "day": 4,
     "name": "Telecabina de Kandersteg (estación del valle)",
     "coords": {
      "lat": 46.497478,
@@ -1618,6 +1649,15 @@ body.is-offline .offline-chip { display: inline-flex; }
      "lat": 46.7560802,
      "lng": 8.0361142
     }
+   },
+   {
+    "day": 5,
+    "name": "B&B Brienz",
+    "coords": {
+     "lat": 46.7560802,
+     "lng": 8.0361142
+    },
+    "origin": true
    },
    {
     "day": 5,
@@ -1677,6 +1717,15 @@ body.is-offline .offline-chip { display: inline-flex; }
    },
    {
     "day": 6,
+    "name": "Anstatthotel Horw",
+    "coords": {
+     "lat": 47.0125507,
+     "lng": 8.3086047
+    },
+    "origin": true
+   },
+   {
+    "day": 6,
     "name": "Zytglogge y los soportales de Berna",
     "coords": {
      "lat": 46.9480298,
@@ -1722,6 +1771,15 @@ body.is-offline .offline-chip { display: inline-flex; }
      "lat": 46.234191,
      "lng": 6.1173335
     }
+   },
+   {
+    "day": 7,
+    "name": "ibis budget Genève Palexpo Aéroport",
+    "coords": {
+     "lat": 46.234191,
+     "lng": 6.1173335
+    },
+    "origin": true
    },
    {
     "day": 7,
@@ -3389,7 +3447,7 @@ body.is-offline .offline-chip { display: inline-flex; }
      "time": "15:15",
      "icon": "✈️",
      "title": "Vuelo de vuelta a Alicante",
-     "description": "HORA PROVISIONAL: es la que se dio cuando el regreso estaba previsto para el sábado 15. Conviene confirmar el horario real del vuelo del domingo 16 y ajustar toda la mañana en consecuencia.",
+     "description": "Dos horas y cinco minutos de vuelo, con llegada a Alicante a las 17:20. Conviene tener la tarjeta de embarque descargada antes de salir del hotel.",
      "type": "transport",
      "duration_min": 125
     }
@@ -3426,8 +3484,8 @@ body.is-offline .offline-chip { display: inline-flex; }
     }
    ],
    "alternative_plans": {
-    "more_time": "Si el vuelo resulta ser más tarde de las 15:15, el Museo Internacional de la Cruz Roja está a quince minutos del centro, abre a las diez y es de los mejores museos de Suiza, además de especialmente potente para una adolescente. Otra opción es Carouge, al otro lado del Arve, un barrio de aire sardo con casi nada de turismo.",
-    "less_time": "Si el vuelo es de mañana, el plan se cae entero y lo sensato es desayunar en el hotel y ir directos al aeropuerto. Ginebra quedaría cubierta con la tarde y la noche del día 6.",
+    "more_time": "Con el vuelo a las 15:15 el margen es escaso, pero si la mañana cunde, el barrio de Carouge queda a diez minutos en tranvía desde el centro: aire sardo, plazas con terrazas y prácticamente ningún turista. El Museo Internacional de la Cruz Roja abre a las 10:00 y es de los mejores de Suiza, aunque pide hora y media larga y ahí ya no cabe.",
+    "less_time": "Si se prefiere no apurar, el mínimo son la Place du Bourg-de-Four y la catedral por fuera, y de vuelta al aeropuerto una hora antes. Ginebra ya queda cubierta con la tarde y la noche del día 6.",
     "rainy_day": "El casco viejo se recorre igual con paraguas, pero la alternativa a cubierto es la Maison Tavel, la casa privada más antigua de la ciudad, hoy museo de historia urbana y con entrada gratuita.",
     "with_kids": "El banco de 126 metros de la Promenade de la Treille es de esas curiosidades que funcionan a cualquier edad, y el muro de la Reforma, con sus figuras de cinco metros, impresiona más de lo que sugiere la foto."
    },
@@ -3440,7 +3498,7 @@ body.is-offline .offline-chip { display: inline-flex; }
    },
    "info": {
     "travel_tips": [
-     "PENDIENTE DE CONFIRMAR: la hora del vuelo de vuelta. El horario de 15:15 a 17:20 se facilitó cuando el regreso estaba previsto para el sábado 15, y el viaje termina ahora el domingo 16. Toda la mañana depende de ese dato.",
+     "El vuelo sale a las 15:15 y hay que devolver el coche antes. Contando la cola del mostrador de alquiler, la facturación y el control, lo prudente es estar en el aeropuerto sobre las 12:15, lo que deja unas tres horas útiles en la ciudad.",
      "El 16 de agosto es domingo: la catedral de Saint-Pierre no abre el interior hasta las 12:00 y el comercio está cerrado casi por completo. El paseo por la ciudad alta funciona igual, pero conviene no contar con entrar en ningún sitio.",
      "Ir al centro en transporte público en vez de en coche evita el aparcamiento de la ciudad alta, que es caro y escaso, y con la tarjeta del hotel no cuesta nada.",
      "Antes de devolver el coche merece la pena fotografiar la carrocería y las llantas por los cuatro costados. Hay reseñas recurrentes de cargos por arañazos menores en los mostradores del aeropuerto de Ginebra."
@@ -3482,10 +3540,6 @@ body.is-offline .offline-chip { display: inline-flex; }
     {
      "subtitle": "La semana antes",
      "text": "Reservar mesa en el Wirtshaus Taube de Lucerna para la cena del día 5, sobre todo si se quiere terraza junto al río. Es la única cena de restaurante planificada del viaje y en agosto se llena. Con el resto de comidas resueltas por picnic, esta es la que conviene asegurar."
-    },
-    {
-     "subtitle": "La semana antes",
-     "text": "Confirmar la hora exacta del vuelo de vuelta del domingo 16 de agosto. El horario que consta en esta guía, de 15:15 a 17:20, se facilitó cuando el regreso estaba previsto para el sábado 15, así que puede no ser el correcto. Toda la mañana del último día depende de ese dato: con un vuelo de mañana no hay tiempo para Ginebra y habría que ir directos al aeropuerto."
     },
     {
      "subtitle": "La víspera",
@@ -3974,7 +4028,7 @@ body.is-offline .offline-chip { display: inline-flex; }
   "schema_version": "1.2",
   "claude_model": "Claude Opus 4.6",
   "web_search_count": 20,
-  "verification_note": "Verificados en fuente oficial: tarifas y horarios de Glacier 3000, Schilthorn, Oeschinensee (incluida la reserva obligatoria de franja del 20 de junio al 20 de septiembre), Trümmelbachfälle y castillo de Chillon; horarios del barco Lucerna-Kehrsiten y del ascensor de Hammetschwand; precio y régimen de la viñeta de autopista. Treinta y ocho coordenadas verificadas con la base de datos de lugares, incluidos los seis alojamientos y las cuatro paradas de Berna. PENDIENTE Y CRÍTICO: la hora real del vuelo de vuelta del domingo 16 de agosto; la que figura (15:15) se dio para el sábado 15 y condiciona toda la mañana del día 7. SIN VERIFICAR: el precio exacto de la entrada de la garganta glaciar de Rosenlaui, el precio infantil del ascensor de Hammetschwand, la coordenada del Peak Walk (anclada a la estación superior del Scex Rouge) y el caudal de la Cascade du Dar en agosto. El horario dominical de la catedral de Saint-Pierre (apertura a las 12:00) procede de la ficha del establecimiento. NOTA DE RUTA: se han descartado las Cataratas del Rin que figuraban en la planificación previa, porque están en Schaffhausen, en dirección opuesta, y añadirían más de dos horas y media de coche al día 6."
+  "verification_note": "Verificados en fuente oficial: tarifas y horarios de Glacier 3000, Schilthorn, Oeschinensee (incluida la reserva obligatoria de franja del 20 de junio al 20 de septiembre), Trümmelbachfälle y castillo de Chillon; horarios del barco Lucerna-Kehrsiten y del ascensor de Hammetschwand; precio y régimen de la viñeta de autopista. Treinta y ocho coordenadas verificadas con la base de datos de lugares, incluidos los seis alojamientos y las cuatro paradas de Berna. El vuelo de vuelta del domingo 16 (15:15 a 17:20) está confirmado por el viajero. SIN VERIFICAR: el precio exacto de la entrada de la garganta glaciar de Rosenlaui, el precio infantil del ascensor de Hammetschwand, la coordenada del Peak Walk (anclada a la estación superior del Scex Rouge) y el caudal de la Cascade du Dar en agosto. El horario dominical de la catedral de Saint-Pierre (apertura a las 12:00) procede de la ficha del establecimiento. NOTA DE RUTA: se han descartado las Cataratas del Rin que figuraban en la planificación previa, porque están en Schaffhausen, en dirección opuesta, y añadirían más de dos horas y media de coche al día 6."
  }
 }
 </script>
@@ -5877,7 +5931,12 @@ body.is-offline .offline-chip { display: inline-flex; }
         var latlngs = porDia[d]
           .filter(function (m) { return m.route !== false; })
           .map(function (m) { return [m.coords.lat, m.coords.lng]; });
-        porDia[d].forEach(function (m) { puntos.push([m.coords.lat, m.coords.lng]); });
+        porDia[d].forEach(function (m) {
+          // El punto de salida no cuenta para el encuadre en la vista general:
+          // ya lo aporta el dia anterior y encoger el mapa por el no aporta nada.
+          if (mapDayFilter === 'all' && m.origin) return;
+          puntos.push([m.coords.lat, m.coords.lng]);
+        });
         if (latlngs.length > 1) {
           L.polyline(latlngs, {
             color: dayColor(d), weight: 3, opacity: 0.78,
@@ -5890,18 +5949,28 @@ body.is-offline .offline-chip { display: inline-flex; }
       visibles.forEach(function (d) {
         var lista = porDia[d];
         var col = dayColor(d);
-        lista.forEach(function (m, idx) {
+        var nParadas = lista.filter(function (m) { return !m.origin; }).length;
+        var cuenta = 0;
+        lista.forEach(function (m) {
           const pid = placeIdForMarker(m);
+          // En la vista general el punto de salida se omite: es el mismo lugar
+          // donde termino el dia anterior y se pintarian dos marcadores encima.
+          if (m.origin && mapDayFilter === 'all') return;
+          if (!m.origin) cuenta++;
           // Con un dia seleccionado el numero pasa a ser el orden de la parada,
           // que es lo que hace legible la ruta. Con «Todos», el numero del dia.
-          var etiqueta = (mapDayFilter === 'all') ? m.day : (idx + 1);
-          var pieza = (mapDayFilter === 'all')
-            ? 'Día ' + m.day
-            : 'Parada ' + (idx + 1) + ' de ' + lista.length + ' · Día ' + m.day;
+          var etiqueta = m.origin ? '🛏' : ((mapDayFilter === 'all') ? m.day : cuenta);
+          var pieza = m.origin
+            ? 'Salida · alojamiento de la noche anterior'
+            : ((mapDayFilter === 'all')
+                ? 'Día ' + m.day
+                : 'Parada ' + cuenta + ' de ' + nParadas + ' · Día ' + m.day);
           const numIcon = () => L.divIcon({
             className: 'custom-marker',
-            html: `<div style="width:30px;height:30px;background:${col};color:#fff;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,0.3);border:2px solid #fff">${etiqueta}</div>`,
-            iconSize: [30, 30], iconAnchor: [15, 15]
+            html: m.origin
+              ? `<div style="width:28px;height:28px;background:var(--bg-card);color:${col};border-radius:50%;display:grid;place-items:center;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.3);border:2px dashed ${col}">${etiqueta}</div>`
+              : `<div style="width:30px;height:30px;background:${col};color:#fff;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,0.3);border:2px solid #fff">${etiqueta}</div>`,
+            iconSize: m.origin ? [28, 28] : [30, 30], iconAnchor: m.origin ? [14, 14] : [15, 15]
           });
           const mk = L.marker([m.coords.lat, m.coords.lng], { icon: numIcon() }).addTo(mapInstance);
           mk.bindPopup(`<strong>${esc(m.name)}</strong><br><small>${esc(pieza)}</small><br><a href="#" onclick="window.__nav.goDay(${m.day});return false;">Ver día →</a>`);
@@ -5912,7 +5981,7 @@ body.is-offline .offline-chip { display: inline-flex; }
           firstPhotoFor(pid).then(function (url) {
             if (!url) return;
             mk.bindPopup(`<img class="map-pop__img" src="${url}" alt=""><strong>${esc(m.name)}</strong><br><small>${esc(pieza)}</small><br><a href="#" onclick="window.__nav.goDay(${m.day});return false;">Ver día →</a>`);
-            if (mapPhotoMode === 'photo') {
+            if (mapPhotoMode === 'photo' && !m.origin) {
               mk.setIcon(L.divIcon({
                 className: 'custom-marker',
                 html: `<div class="marker-photo" style="position:relative"><img src="${url}" alt=""><span class="marker-photo__day" style="background:${col}">${etiqueta}</span></div>`,
