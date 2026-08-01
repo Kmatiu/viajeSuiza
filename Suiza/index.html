@@ -1211,7 +1211,7 @@ body.is-offline .offline-chip { display: inline-flex; }
   <div id="map-container">
     <div id="map"></div>
   </div>
-  <div class="map-legend">Las líneas unen las paradas de cada día en el orden del itinerario. Son trazos rectos, no rutas de carretera: sirven para leer la forma del día, no para navegar. Con «Todos» se ven discontinuas y numeradas por día. Al elegir un día concreto pasan a continuas, los números indican el orden de las paradas y aparece 🛏 en el alojamiento del que se sale esa mañana.</div>
+  <div class="map-legend">Las líneas unen las paradas de cada día en el orden del itinerario. Son trazos rectos, no rutas de carretera: sirven para leer la forma del día, no para navegar. Con «Todos» se ven discontinuas y numeradas por día. Al elegir un día concreto pasan a continuas y los números indican el orden de las paradas. El 🛏 marca el alojamiento del que se sale esa mañana y el ✈️, el punto donde termina el viaje.</div>
 </main>
 
 <!-- CONSEJOS -->
@@ -1788,6 +1788,15 @@ body.is-offline .offline-chip { display: inline-flex; }
      "lat": 46.2011267,
      "lng": 6.1485159
     }
+   },
+   {
+    "day": 7,
+    "name": "Aeropuerto de Ginebra (vuelo de vuelta)",
+    "coords": {
+     "lat": 46.2271705,
+     "lng": 6.1026324
+    },
+    "finish": true
    }
   ]
  },
@@ -5934,6 +5943,7 @@ body.is-offline .offline-chip { display: inline-flex; }
         porDia[d].forEach(function (m) {
           // El punto de salida no cuenta para el encuadre en la vista general:
           // ya lo aporta el dia anterior y encoger el mapa por el no aporta nada.
+          // El de fin de viaje si cuenta siempre: cierra el recorrido.
           if (mapDayFilter === 'all' && m.origin) return;
           puntos.push([m.coords.lat, m.coords.lng]);
         });
@@ -5949,28 +5959,34 @@ body.is-offline .offline-chip { display: inline-flex; }
       visibles.forEach(function (d) {
         var lista = porDia[d];
         var col = dayColor(d);
-        var nParadas = lista.filter(function (m) { return !m.origin; }).length;
+        // Ni el punto de salida ni el de fin de viaje son paradas visitables:
+        // no se numeran ni entran en el recuento del dia.
+        var esTransito = function (m) { return !!(m.origin || m.finish); };
+        var nParadas = lista.filter(function (m) { return !esTransito(m); }).length;
         var cuenta = 0;
         lista.forEach(function (m) {
           const pid = placeIdForMarker(m);
           // En la vista general el punto de salida se omite: es el mismo lugar
           // donde termino el dia anterior y se pintarian dos marcadores encima.
+          // El de fin de viaje se muestra siempre: no duplica nada y cierra la ruta.
           if (m.origin && mapDayFilter === 'all') return;
-          if (!m.origin) cuenta++;
+          if (!esTransito(m)) cuenta++;
           // Con un dia seleccionado el numero pasa a ser el orden de la parada,
           // que es lo que hace legible la ruta. Con «Todos», el numero del dia.
-          var etiqueta = m.origin ? '🛏' : ((mapDayFilter === 'all') ? m.day : cuenta);
+          var etiqueta = m.origin ? '🛏' : (m.finish ? '✈️' : ((mapDayFilter === 'all') ? m.day : cuenta));
           var pieza = m.origin
             ? 'Salida · alojamiento de la noche anterior'
-            : ((mapDayFilter === 'all')
-                ? 'Día ' + m.day
-                : 'Parada ' + cuenta + ' de ' + nParadas + ' · Día ' + m.day);
+            : (m.finish
+                ? 'Fin del viaje'
+                : ((mapDayFilter === 'all')
+                    ? 'Día ' + m.day
+                    : 'Parada ' + cuenta + ' de ' + nParadas + ' · Día ' + m.day));
           const numIcon = () => L.divIcon({
             className: 'custom-marker',
-            html: m.origin
+            html: esTransito(m)
               ? `<div style="width:28px;height:28px;background:var(--bg-card);color:${col};border-radius:50%;display:grid;place-items:center;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.3);border:2px dashed ${col}">${etiqueta}</div>`
               : `<div style="width:30px;height:30px;background:${col};color:#fff;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,0.3);border:2px solid #fff">${etiqueta}</div>`,
-            iconSize: m.origin ? [28, 28] : [30, 30], iconAnchor: m.origin ? [14, 14] : [15, 15]
+            iconSize: esTransito(m) ? [28, 28] : [30, 30], iconAnchor: esTransito(m) ? [14, 14] : [15, 15]
           });
           const mk = L.marker([m.coords.lat, m.coords.lng], { icon: numIcon() }).addTo(mapInstance);
           mk.bindPopup(`<strong>${esc(m.name)}</strong><br><small>${esc(pieza)}</small><br><a href="#" onclick="window.__nav.goDay(${m.day});return false;">Ver día →</a>`);
@@ -5981,7 +5997,7 @@ body.is-offline .offline-chip { display: inline-flex; }
           firstPhotoFor(pid).then(function (url) {
             if (!url) return;
             mk.bindPopup(`<img class="map-pop__img" src="${url}" alt=""><strong>${esc(m.name)}</strong><br><small>${esc(pieza)}</small><br><a href="#" onclick="window.__nav.goDay(${m.day});return false;">Ver día →</a>`);
-            if (mapPhotoMode === 'photo' && !m.origin) {
+            if (mapPhotoMode === 'photo' && !esTransito(m)) {
               mk.setIcon(L.divIcon({
                 className: 'custom-marker',
                 html: `<div class="marker-photo" style="position:relative"><img src="${url}" alt=""><span class="marker-photo__day" style="background:${col}">${etiqueta}</span></div>`,
