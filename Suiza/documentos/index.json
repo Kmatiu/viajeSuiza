@@ -15,8 +15,7 @@
     {
       "archivo": "infoguide-murren-sommer.pdf",
       "titulo": "Info Guide de Mürren en verano",
-      "dia": 3,
-      "imprescindible": true
+      "dia": 3
     },
     {
       "enlace": "https://oeschinensee.ch",
@@ -28,22 +27,19 @@
       "archivo": "kandersteg-sommerpanoramakarte.pdf",
       "titulo": "Panorámica de verano de Kandersteg",
       "tipo": "mapa",
-      "dia": 4,
-      "imprescindible": true
+      "dia": 4
     },
     {
       "archivo": "fahrplan-sommer-23-05-06-09-2026.pdf",
       "titulo": "Horario de verano del barco de Lucerna",
       "tipo": "transporte",
-      "dia": 5,
-      "imprescindible": true
+      "dia": 5
     },
     {
       "archivo": "01-bern-city-map-aktuell-c-bern-welcome.pdf",
       "titulo": "Mapa de Berna",
       "tipo": "mapa",
-      "dia": 6,
-      "imprescindible": true
+      "dia": 6
     }
   ]
 }
