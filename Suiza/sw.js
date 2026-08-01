@@ -117,4 +117,3 @@ self.addEventListener('message', function (e) {
     if (port) port.postMessage({ finished: true });
   });
 });
- 
